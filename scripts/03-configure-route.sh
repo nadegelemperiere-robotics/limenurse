@@ -46,7 +46,7 @@ export ROUTING_SCRIPT_PATH=/usr/local/bin/limelight-routing.sh
 
 cp $scriptpath/../data/udp_forwarder.py /usr/local/bin/udp_forwarder.py
 
-envsubst '$ETH_IP_GATEWAY,$USB_IP_GATEWAY' < $scriptpath/../data/limelight-routing.sh > $ROUTING_SCRIPT_PATH
+envsubst '$ETH_IP_GATEWAY,$USB_IP_GATEWAY_LINUX,$USB_IP_GATEWAY_WINDOWS' < $scriptpath/../data/limelight-routing.sh > $ROUTING_SCRIPT_PATH
 chmod +x $ROUTING_SCRIPT_PATH
 
 echo "  ➡️  Created limelight routing script"
