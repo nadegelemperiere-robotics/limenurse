@@ -505,7 +505,7 @@ if __name__ == "__main__":
     parser.add_argument("--to-ip", dest="dst_ip", required=True, help="Destination IP to forward to")
     parser.add_argument("--from-interface1", dest="src_int1", required=True, help="Interface for reverse direction")
     parser.add_argument("--from-interface2", dest="src_int2", required=True, help="Interface for reverse direction")
-    parser.add_argument("--from-interface3", dest="src_int2", required=True, help="Interface for reverse direction")
+    parser.add_argument("--from-interface3", dest="src_int3", required=True, help="Interface for reverse direction")
     parser.add_argument("--to-interface", dest="dst_int", required=True, help="Interface for forward direction")
 
     args = parser.parse_args()
