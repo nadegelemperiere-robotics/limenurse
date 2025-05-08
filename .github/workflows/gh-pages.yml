@@ -1,0 +1,39 @@
+# -------------------------------------------------------
+# Copyright (c) [2025] Nadege Lemperiere
+# All rights reserved
+# -------------------------------------------------------
+# Documentation publication pipeline
+# -------------------------------------------------------
+# Nadège LEMPERIERE, @30th April 2025
+# Latest revision: 30th April 2025
+# -------------------------------------------------------
+
+name: Deploy Documentation
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install sphinx
+          pip install sphinx-rtd-theme
+      - name: Build docs
+        run: |
+          sphinx-build -b html docs _build/html
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.TOKEN }}
+          publish_dir: _build/html

@@ -1,0 +1,14 @@
+[Unit]
+Description=Limelight Routing
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=$ROUTING_SCRIPT_PATH
+RemainAfterExit=yes
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
