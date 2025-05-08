@@ -1,0 +1,210 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Design considerations &mdash; Limelight FTC Bridge  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Architecture" href="architecture.html" />
+    <link rel="prev" title="About the project" href="about.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">About the project</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Design considerations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#assumptions-and-dependencies">Assumptions and Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#general-constraints">General Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#goals-and-guidelines">Goals and Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#development-methods-and-contingencies">Development Methods and Contingencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#architectural-strategies">Architectural Strategies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#development-laptop-interface">Development Laptop Interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#control-hub-interface">Control Hub Interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#limelight-interface">Limelight Interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#raspberry-pi-software">Raspberry Pi software</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Limelight FTC Bridge</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Design considerations</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com//nadegelemperiere-robotics/limenurse/blob/considerations.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="design-considerations">
+<h1>Design considerations<a class="headerlink" href="#design-considerations" title="Link to this heading"></a></h1>
+<section id="assumptions-and-dependencies">
+<h2>Assumptions and Dependencies<a class="headerlink" href="#assumptions-and-dependencies" title="Link to this heading"></a></h2>
+<p>Limelight supports Ethernet-only connectivity through <a class="reference external" href="https://en.wikipedia.org/wiki/Ethernet_over_USB">USB gadget</a>.</p>
+</section>
+<section id="general-constraints">
+<h2>General Constraints<a class="headerlink" href="#general-constraints" title="Link to this heading"></a></h2>
+<p>The Limelight 3A camera receives power via the FTC Control Hub’s USB-A 3.0 port. which is insufficient to power both the Raspberry Pi and the Limelight.</p>
+</section>
+<section id="goals-and-guidelines">
+<h2>Goals and Guidelines<a class="headerlink" href="#goals-and-guidelines" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Enable drop-in integration between Limelight 3A and Control Hub without modifying robot code or wiring.</p></li>
+<li><p>Ensure PI is accessible to the development laptop when the laptop is connected to the FTC dashboard over the control hub Wi-Fi.</p></li>
+<li><p>Provide reliable access to the PI for debugging during development.</p></li>
+<li><p>Support robust operation during hot-plugging of the Limelight or PI.</p></li>
+<li><p>Prioritize low-latency behavior for real-time testing and debugging.</p></li>
+<li><p>Require no configuration changes on the Control Hub or development laptop beyond existing Limelight requirements.</p></li>
+</ul>
+</section>
+<section id="development-methods-and-contingencies">
+<h2>Development Methods and Contingencies<a class="headerlink" href="#development-methods-and-contingencies" title="Link to this heading"></a></h2>
+<p><strong>LimeNurse</strong> provides tests to check software installation on a laptop before integration with the FTC hub</p>
+</section>
+<section id="architectural-strategies">
+<h2>Architectural Strategies<a class="headerlink" href="#architectural-strategies" title="Link to this heading"></a></h2>
+<section id="development-laptop-interface">
+<h3>Development Laptop Interface<a class="headerlink" href="#development-laptop-interface" title="Link to this heading"></a></h3>
+<p>During tuning, the development laptop wireless connection is often limited to the control hub wifi to access FTC dashboard. Limelight services over raspberry pi must then use a wired connection.
+The Raspberry Pi connects to the Control Hub via its USB-C port using USB gadget mode, emulating the Limelight interface. The remaining Ethernet port on the Pi is used to route Limelight traffic to the development laptop, which can then access the Limelight API.
+This interface will provide SSH logging capabilities to access the Pi.</p>
+</section>
+<section id="control-hub-interface">
+<h3>Control Hub Interface<a class="headerlink" href="#control-hub-interface" title="Link to this heading"></a></h3>
+<p><strong>LimeNurse</strong> uses USB gadget to provide Ethernet over USB with the same interface name as the Limelight.
+Since the Control Hub cannot power both devices, a USB splitter is used. Its data line connects to the Control Hub, while power is supplied independently using an official Raspberry Pi cable and a compatible power source (minimum 15W at 5V).
+The USB splitter shall be carefully chosen to transport the 15W - 5A current.</p>
+</section>
+<section id="limelight-interface">
+<h3>Limelight Interface<a class="headerlink" href="#limelight-interface" title="Link to this heading"></a></h3>
+<p>The PI power adaptor is not enough to power both PI and limelight. An USB splitter is used to supply additional power to the limelight. A standard USB splitter separating data from power is enough.
+Limelight uses a USB C 3.0 port to connect to the Raspberry Pi.</p>
+</section>
+<section id="raspberry-pi-software">
+<h3>Raspberry Pi software<a class="headerlink" href="#raspberry-pi-software" title="Link to this heading"></a></h3>
+<p>Routing from limelight to Control Hub and developer laptop can not be performed using layer 2 bridging without preventing Pi SSH connection. iptables be used for unicast routing and custom components for broadcast UDP routing.</p>
+<p>After a lot of trial and error with avahi default name management, which ended up providing name resolution for ping, ssh capabilities with a tuned command line, and failure in an http browser, raspberry pi uses its own name manager baed on python zeroconf.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="about.html" class="btn btn-neutral float-left" title="About the project" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="architecture.html" class="btn btn-neutral float-right" title="Architecture" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Nadege Lemperiere.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #2b2d2b;
+    }
+    /* Sidebar */
+    .wy-nav-side {
+      background: #2b2d2b;
+    }
+    /* Title color */
+    .wy-menu-vertical header {
+        color: #7ea351;
+    }
+    .wy-menu-vertical p.caption {
+        color: #7ea351;
+    }
+    /* Links color */
+    a {
+        color: #7ea351;
+    }
+    a:hover {
+        color: #7ea351;
+    }
+    a:visited{
+        color: #fc9b67;
+    }
+    /* Table color */
+    .wy-table thead {
+        color: #7ea351;
+    }
+  </style>
+
+
+</body>
+</html>

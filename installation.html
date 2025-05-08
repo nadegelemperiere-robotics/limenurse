@@ -1,0 +1,252 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; Limelight FTC Bridge  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Testing" href="testing.html" />
+    <link rel="prev" title="Architecture" href="architecture.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">About the project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="considerations.html">Design considerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-link-layer-deployment">Data Link Layer Deployment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#network-layer-deployment">Network Layer Deployment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transport-layer-deployment">Transport Layer Deployment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Limelight FTC Bridge</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Installation</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com//nadegelemperiere-robotics/limenurse/blob/installation.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
+<p>The Raspberry Pi shall have been initialized with a basic OS.</p>
+<ul class="simple">
+<li><p>Download and install the <strong>Raspberry Pi Imager</strong> on your laptop.</p></li>
+<li><p>Insert the Micro SD card into your laptop.</p></li>
+<li><dl class="simple">
+<dt>Launch Raspberry Pi Imager:</dt><dd><ul>
+<li><p>Device: <strong>Raspberry Pi 5</strong></p></li>
+<li><p>Operating System: <strong>Raspberry Pi OS (64-bit)</strong></p></li>
+<li><p>Storage: Your Micro SD card</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Customize OS settings:</dt><dd><ul>
+<li><p>Hostname : <strong>limenurse.local</strong></p></li>
+<li><p>Set username, password</p></li>
+<li><p>Configure Wi-Fi and locale</p></li>
+<li><p>Enable SSH through password</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Flash the card and verify.</p></li>
+</ul>
+<p><strong>limenurse.local</strong> is the name to use to access the PI through wifi. You are welcome to use any other name you want, as long as it’s not limelight.local which we will use later on on the USB interface.</p>
+<p>Insert the Micro SD card into the Raspberry Pi 5, connect to the Pi through your wifi.</p>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Clone this repository locally</p></li>
+<li><p>Setup the target gateway IP addresses for the pi usb0 and eth0 interfaces in conf/env.</p></li>
+</ul>
+<p>Here is an example of the env file to modify if needed</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">USB_IP_GATEWAY</span><span class="o">=</span><span class="mf">172.30.0.1</span>
+<span class="n">export</span> <span class="n">USB_IP_ADDRESSES</span><span class="o">=</span><span class="mf">172.30.0.10</span><span class="p">,</span><span class="mf">172.30.0.20</span><span class="p">,</span><span class="mf">255.255.255.0</span>
+<span class="n">export</span> <span class="n">ETH_IP_GATEWAY</span><span class="o">=</span><span class="mf">172.40.0.1</span>
+<span class="n">export</span> <span class="n">ETH_IP_ADDRESSES</span><span class="o">=</span><span class="mf">172.40.0.10</span><span class="p">,</span><span class="mf">172.40.0.20</span><span class="p">,</span><span class="mf">255.255.255.0</span>
+
+</pre></div>
+</div>
+<p>IP address should be something like 172.XXX.0.1 with XXX not being 29 to avoid IP conflict with the real limelight inside the Pi.</p>
+</section>
+<section id="data-link-layer-deployment">
+<h2>Data Link Layer Deployment<a class="headerlink" href="#data-link-layer-deployment" title="Link to this heading"></a></h2>
+<p>This first step will configure the PI to provide limelight like USB gadget services on its usb0 interface.
+It’s performed by a bash script which will reboot the PI once and has to be relaunched to finalize the USB gadget configuration</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>scripts/01-configure-gadget.sh
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Enable USB device mode in the Raspberry Pi firmware</p></li>
+<li><p>Load necessary kernel modules (dwc2)</p></li>
+<li><p>Set device-tree overlays</p></li>
+<li><p>Install the <a class="reference external" href="../data/limelight-gadget.sh">limelight-gadget.sh</a> script to mock limelight USB descriptors and force usb0 gateway IP address</p></li>
+<li><p>Install the systemd <a class="reference external" href="../data/limelight-gadget.service">limelight-gadget.service</a> to start and persist the script</p></li>
+</ul>
+</section>
+<section id="network-layer-deployment">
+<h2>Network Layer Deployment<a class="headerlink" href="#network-layer-deployment" title="Link to this heading"></a></h2>
+<p>The second step is to deploy network management services on both eth0 and usb0</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>scripts/02-configure-network.sh
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Configure dnsmasq to offer DHCP services on both interfaces and allow laptop to communicate sith those interfaces by getting an IP address on thei network</p></li>
+<li><p>Restrict the current Pi name mangement system to the wifi wlan0 interface</p></li>
+<li><p>Publish limelight.local name on usb0 gateway and limelight.eth.local on eth0 gateway</p></li>
+</ul>
+<p>After the reboot, the PI is accessible from wifi, ethernet and usb gadget interfaces with different names :</p>
+<ul class="simple">
+<li><p>The wifi wlan0 interface keeps the name configured at Pi installation : <strong>limenurse.local</strong></p></li>
+<li><p>The ethernet eth0 interface gets <strong>limelight.eth.local</strong> name</p></li>
+<li><p>The USB gadget usb0 interface gets <strong>limelight.local</strong> name to fully mock the PI</p></li>
+</ul>
+<p>ssh login from development laptop through eth0 interface shall now be done using</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ssh<span class="w"> </span>-o<span class="w"> </span><span class="nv">ConnectTimeout</span><span class="o">=</span><span class="m">5</span><span class="w"> </span>user@limelight.eth.local
+</pre></div>
+</div>
+<p>This command line makes sure the dns request accepts IPv4 answer and does not wait indefinitely to an IPv6 answer.</p>
+</section>
+<section id="transport-layer-deployment">
+<h2>Transport Layer Deployment<a class="headerlink" href="#transport-layer-deployment" title="Link to this heading"></a></h2>
+<p>The thirs step is to launch forward data between interfaces</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>scripts/03-configure-routing.sh
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Install the <a class="reference external" href="../data/udp_forwarder.py">udp_forwarder.py</a> script to manage udp broadcast network data</p></li>
+<li><p>Install the <a class="reference external" href="../data/limelight-routing.sh">limelight-routing.sh</a> script to configure iptables for unicast data transfer between interfaces and udp_forwarder start</p></li>
+<li><p>Install the systemd <a class="reference external" href="../data/limelight-routing.service">limelight-routing.service</a> to start and persist the script</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="architecture.html" class="btn btn-neutral float-left" title="Architecture" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="testing.html" class="btn btn-neutral float-right" title="Testing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Nadege Lemperiere.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #2b2d2b;
+    }
+    /* Sidebar */
+    .wy-nav-side {
+      background: #2b2d2b;
+    }
+    /* Title color */
+    .wy-menu-vertical header {
+        color: #7ea351;
+    }
+    .wy-menu-vertical p.caption {
+        color: #7ea351;
+    }
+    /* Links color */
+    a {
+        color: #7ea351;
+    }
+    a:hover {
+        color: #7ea351;
+    }
+    a:visited{
+        color: #fc9b67;
+    }
+    /* Table color */
+    .wy-table thead {
+        color: #7ea351;
+    }
+  </style>
+
+
+</body>
+</html>

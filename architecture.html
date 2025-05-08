@@ -1,0 +1,544 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Architecture &mdash; Limelight FTC Bridge  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="Design considerations" href="considerations.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">About the project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="considerations.html">Design considerations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#hardware-architecture">Hardware Architecture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#hardware-architecture-diagram">Hardware architecture diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bill-of-materials">Bill of materials</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#internal-communications-architecture">Internal Communications Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#software-architecture">Software Architecture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#data-link-layer-2-configuration">Data Link Layer (2) configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#network-layer-3-configuration">Network Layer (3) configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transport-layer-4-configuration">Transport Layer (4) configuration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Limelight FTC Bridge</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Architecture</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com//nadegelemperiere-robotics/limenurse/blob/architecture.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="architecture">
+<h1>Architecture<a class="headerlink" href="#architecture" title="Link to this heading"></a></h1>
+<section id="hardware-architecture">
+<h2>Hardware Architecture<a class="headerlink" href="#hardware-architecture" title="Link to this heading"></a></h2>
+<section id="hardware-architecture-diagram">
+<h3>Hardware architecture diagram<a class="headerlink" href="#hardware-architecture-diagram" title="Link to this heading"></a></h3>
+<p>The following diagram gives the hardware architecture required to setup LimeNurse.</p>
+<a class="reference internal image-reference" href="_images/hardware-architecture.png"><img alt="Hardware architecture" src="_images/hardware-architecture.png" style="width: 800px;" />
+</a>
+</section>
+<section id="bill-of-materials">
+<h3>Bill of materials<a class="headerlink" href="#bill-of-materials" title="Link to this heading"></a></h3>
+<p>Trials and errors led to the following bill of materials, the list of parts on which <strong>LimeNurse</strong> has been successfully deployed.
+Some other configurations may also be compatible, so each part has a justification of why it was chosen, so that users can consider other options with a discerning eye.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Hardware components and references</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 50.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Identification</p></th>
+<th class="head"><p>Image</p></th>
+<th class="head"><p>Justification</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="https://www.raspberrypi.com">Raspberry Pi</a></p></td>
+<td><p>SKU 784181</p></td>
+<td><a class="reference internal image-reference" href="_images/pi5.png"><img alt="_images/pi5.png" src="_images/pi5.png" style="width: 120px;" />
+</a>
+</td>
+<td><p>Supports USB gadget and provide an ethernet port on top of the USB C and USB A ones.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://www.amazon.com/MOGOOD-Splitter-Adapter-Monitor-Charging/dp/B0CB3M46Y5/ref=asc_df_B0CB3M46Y5?mcid=cd76c850e7fc3868abd8b788f2979969&amp;hvocijid=8809277218558578786-B0CB3M46Y5-&amp;hvexpln=73&amp;tag=hyprod-20&amp;linkCode=df0&amp;hvadid=721245378154&amp;hvpos=&amp;hvnetw=g&amp;hvrand=8809277218558578786&amp;hvpone=&amp;hvptwo=&amp;hvqmt=&amp;hvdev=c&amp;hvdvcmdl=&amp;hvlocint=&amp;hvlocphy=9004214&amp;hvtargid=pla-2281435179098&amp;th=1">Mogood USB C Male to Dual USB C Female Cable</a></p></td>
+<td><p>ASIN B0CB3M46Y5</p></td>
+<td><a class="reference internal image-reference" href="_images/limelight-splitter.png"><img alt="_images/limelight-splitter.png" src="_images/limelight-splitter.png" style="width: 120px;" />
+</a>
+</td>
+<td><p>Not critical - Provides limelight power from an external source</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://thepihut.com/products/usb-c-data-power-splitter">8086 USB C Data/Power Splitter</a></p></td>
+<td><p>SKU 103677</p></td>
+<td><a class="reference internal image-reference" href="_images/pi-splitter.png"><img alt="_images/pi-splitter.png" src="_images/pi-splitter.png" style="width: 120px;" />
+</a>
+</td>
+<td><p>One of the few USB splitter handling the 15W / 5V power from Pi official power supply</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://www.raspberrypi.com/products/raspberry-pi-universal-power-supply/">Raspberry PI official power supply</a></p></td>
+<td><p>SKU SC0623</p></td>
+<td><a class="reference internal image-reference" href="_images/power.png"><img alt="_images/power.png" src="_images/power.png" style="width: 120px;" />
+</a>
+</td>
+<td><p>Provide maximal power to Pi. Considered first to power both Pi and Limelight, but was not enough. Maybe not necessary for Pi alone</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://www.amazon.com/Durcord-Upgarded-Charging-Charger-Compatible/dp/B0CJHVS2ND?th=1">10” USB C - USB C cable</a></p></td>
+<td></td>
+<td><a class="reference internal image-reference" href="_images/cableCC.png"><img alt="_images/cableCC.png" src="_images/cableCC.png" style="width: 120px;" />
+</a>
+</td>
+<td><p>Link the limelight on robot to the development stand while providing enough length for the robot to move</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://www.amazon.com/Besgoods-Charger-Charging-Compatible-G7-2Pack/dp/B0B6F9DVZ3/ref=sr_1_1?crid=R2FS0C3SQ3PZ&amp;dib=eyJ2IjoiMSJ9.D4dG9gukQqLuT6eezXZoL4X4fdRPpepyDNXhb3k-oD1pQphYd8ZElsUQ_vfgsEoMiBrsdtkIKDNxQTDjE7NVSZZtR2gqxVm1qPTF6di59jAuge7vmaEFF5TSZTpGpMO9eySv9ZVysH9KEE29dteXyW4UpH9cfhOMRdIQrTMLJ90hE6VM74kBORd348jd9ffCoI00FmnIuKiZvuTbxuASJ_9feBdoGNJS9hAdQY8xU3rsbBaewUJM0MQPCQGeiybA7xj0nLgP0Q3iRSC7HLs4lUBy4A9Qw35cu1yfMVvNaeY.scAzlwNV8u7s0l0RSEB6zRaFFNlPKD8Rs1oZRDFYfoM&amp;dib_tag=se&amp;keywords=besgoods%2Busb%2Bc%2Busb%2Ba%2Bgreen&amp;qid=1746534171&amp;s=electronics&amp;sprefix=besgoods%2Busb%2Bc%2Busb%2Ba%2Bgreen%2Celectronics%2C60&amp;sr=1-1&amp;th=1">10” USB C - USB A cable</a></p></td>
+<td></td>
+<td><a class="reference internal image-reference" href="_images/cableCA.png"><img alt="_images/cableCA.png" src="_images/cableCA.png" style="width: 120px;" />
+</a>
+</td>
+<td><p>Link the control hub on robot to the development stand while providing enough length for the robot to move</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="internal-communications-architecture">
+<h2>Internal Communications Architecture<a class="headerlink" href="#internal-communications-architecture" title="Link to this heading"></a></h2>
+<p>The following table shows the operational interfaces provided by <strong>LimeNurse</strong></p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Operational Interfaces Control Table</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Source</p></th>
+<th class="head"></th>
+<th class="head"></th>
+<th class="head"></th>
+<th class="head"><p>Connection</p></th>
+<th class="head"></th>
+<th class="head"><p>Destination</p></th>
+<th class="head"></th>
+<th class="head"></th>
+<th class="head"></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+<tr class="row-even"><th class="head"><p>Component</p></th>
+<th class="head"><p>Interface</p></th>
+<th class="head"><p>Port</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Protocol</p></th>
+<th class="head"><p>Data</p></th>
+<th class="head"><p>Component</p></th>
+<th class="head"><p>Interface</p></th>
+<th class="head"><p>Port</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-odd"><td><p>Developer laptop</p></td>
+<td><p>Ethernet</p></td>
+<td></td>
+<td></td>
+<td><p>udp</p></td>
+<td><p>Name resolution exchanges</p></td>
+<td><p>Raspberry PI</p></td>
+<td><p>Ethernet (eth0)</p></td>
+<td><p>53, 67, 68, 5353</p></td>
+<td></td>
+<td><p>Avahi name resolution exchanges</p></td>
+</tr>
+<tr class="row-even"><td><p>Developer laptop</p></td>
+<td><p>Ethernet</p></td>
+<td></td>
+<td></td>
+<td><p>http</p></td>
+<td><p>limelight web client</p></td>
+<td><p>Raspberry PI</p></td>
+<td><p>Ethernet (eth0)</p></td>
+<td><p>5801</p></td>
+<td><p>limelight.eth.local</p></td>
+<td><p>Web client tuning and debug access</p></td>
+</tr>
+<tr class="row-odd"><td><p>Developer laptop</p></td>
+<td><p>Ethernet</p></td>
+<td></td>
+<td></td>
+<td><p>http + websockets</p></td>
+<td><p>limelight video streams</p></td>
+<td><p>Raspberry PI</p></td>
+<td><p>Ethernet (eth0)</p></td>
+<td><p>5802, 5800, …</p></td>
+<td><p>limelight.eth.local</p></td>
+<td><p>Video stream display</p></td>
+</tr>
+<tr class="row-even"><td><p>Developer laptop</p></td>
+<td><p>Ethernet</p></td>
+<td></td>
+<td></td>
+<td><p>ssh</p></td>
+<td><p>Pi commands</p></td>
+<td><p>Raspberry PI</p></td>
+<td><p>Ethernet (eth0)</p></td>
+<td><p>22</p></td>
+<td><p>limelight.eth.local</p></td>
+<td><p>Raspberry Pi debug access</p></td>
+</tr>
+<tr class="row-odd"><td><p>Control hub</p></td>
+<td><p>USB A</p></td>
+<td></td>
+<td></td>
+<td><p>http + websocket</p></td>
+<td><p>limelight rest API requests and responses</p></td>
+<td><p>Raspberry PI</p></td>
+<td><p>USB C</p></td>
+<td><p>5807, 5806</p></td>
+<td><p>limelight.local</p></td>
+<td><p>Limelight vision result http access</p></td>
+</tr>
+<tr class="row-even"><td><p>Raspberry Pi</p></td>
+<td><p>USB C (eth1)</p></td>
+<td></td>
+<td></td>
+<td><p>http</p></td>
+<td><p>limelight web client</p></td>
+<td><p>Limelight</p></td>
+<td><p>USB C</p></td>
+<td><p>5801</p></td>
+<td><p>limelight.local</p></td>
+<td><p>Web client</p></td>
+</tr>
+<tr class="row-odd"><td><p>Raspberry Pi</p></td>
+<td><p>USB C (eth1)</p></td>
+<td></td>
+<td></td>
+<td><p>http + websockets</p></td>
+<td><p>limelight video streams</p></td>
+<td><p>Limelight</p></td>
+<td><p>USB C</p></td>
+<td><p>5802, 5800, …</p></td>
+<td><p>limelight.local</p></td>
+<td><p>Video stream display</p></td>
+</tr>
+<tr class="row-even"><td><p>Raspberry Pi</p></td>
+<td><p>USB C (eth1)</p></td>
+<td></td>
+<td></td>
+<td><p>http + websocket</p></td>
+<td><p>limelight rest API requests and responses</p></td>
+<td><p>Raspberry PI</p></td>
+<td><p>USB C</p></td>
+<td><p>5807, 5806</p></td>
+<td><p>limelight.local</p></td>
+<td><p>Limelight vision result http access</p></td>
+</tr>
+</tbody>
+</table>
+<p>The following table shows the interfaces provided by <strong>LimeNurse</strong> for deployment testing purpose</p>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">Test Interface Control Table</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+<col style="width: 9.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Source</p></th>
+<th class="head"></th>
+<th class="head"></th>
+<th class="head"></th>
+<th class="head"><p>Connection</p></th>
+<th class="head"></th>
+<th class="head"><p>Destination</p></th>
+<th class="head"></th>
+<th class="head"></th>
+<th class="head"></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+<tr class="row-even"><th class="head"><p>Component</p></th>
+<th class="head"><p>Interface</p></th>
+<th class="head"><p>Port</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Protocol</p></th>
+<th class="head"><p>Data</p></th>
+<th class="head"><p>Component</p></th>
+<th class="head"><p>Interface</p></th>
+<th class="head"><p>Port</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-odd"><td><p>Developer laptop</p></td>
+<td><p>USB A</p></td>
+<td></td>
+<td></td>
+<td><p>udp</p></td>
+<td><p>Name resolution exchanges</p></td>
+<td><p>Raspberry PI</p></td>
+<td><p>USB C (usb0)</p></td>
+<td><p>53, 67, 68, 5353</p></td>
+<td></td>
+<td><p>Avahi name resolution exchanges</p></td>
+</tr>
+<tr class="row-even"><td><p>Developer laptop</p></td>
+<td><p>Ethernet</p></td>
+<td></td>
+<td></td>
+<td><p>http</p></td>
+<td><p>limelight web client</p></td>
+<td><p>Raspberry PI</p></td>
+<td><p>USB C (usb0)</p></td>
+<td><p>5801</p></td>
+<td><p>limelight.local</p></td>
+<td><p>Web client tuning and debug access</p></td>
+</tr>
+<tr class="row-odd"><td><p>Developer laptop</p></td>
+<td><p>USB A</p></td>
+<td></td>
+<td></td>
+<td><p>http + websockets</p></td>
+<td><p>limelight video streams</p></td>
+<td><p>Raspberry PI</p></td>
+<td><p>USB C (usb0)</p></td>
+<td><p>5802, 5800, …</p></td>
+<td><p>limelight.local</p></td>
+<td><p>Video stream display</p></td>
+</tr>
+<tr class="row-even"><td><p>Developer laptop</p></td>
+<td><p>USB A</p></td>
+<td></td>
+<td></td>
+<td><p>UDP</p></td>
+<td><p>broadcast LLPhoneHome</p></td>
+<td><p>Raspberry PI</p></td>
+<td><p>USB C (usb0)</p></td>
+<td><p>5809</p></td>
+<td><p>limelight.local</p></td>
+<td><p>Limelight discovery</p></td>
+</tr>
+<tr class="row-odd"><td><p>Developer laptop</p></td>
+<td><p>Ethernet</p></td>
+<td></td>
+<td></td>
+<td><p>UDP</p></td>
+<td><p>broadcast LLPhoneHome</p></td>
+<td><p>Raspberry PI</p></td>
+<td><p>Ethernet (eth0)</p></td>
+<td><p>5809</p></td>
+<td><p>limelight.eth.local</p></td>
+<td><p>Limelight discovery</p></td>
+</tr>
+<tr class="row-even"><td><p>Developer laptop</p></td>
+<td><p>USB A</p></td>
+<td></td>
+<td></td>
+<td><p>http + websocket</p></td>
+<td><p>limelight rest API requests and responses</p></td>
+<td><p>Raspberry PI</p></td>
+<td><p>USB C (usb0)</p></td>
+<td><p>5807, 5806</p></td>
+<td><p>limelight.local</p></td>
+<td><p>Limelight vision result http access</p></td>
+</tr>
+<tr class="row-odd"><td><p>Developer laptop</p></td>
+<td><p>Ethernet</p></td>
+<td></td>
+<td></td>
+<td><p>http + websocket</p></td>
+<td><p>limelight rest API requests and responses</p></td>
+<td><p>Raspberry PI</p></td>
+<td><p>Ethernet (eth0)</p></td>
+<td><p>5807, 5806</p></td>
+<td><p>limelight.eth.local</p></td>
+<td><p>Limelight vision result http access</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="software-architecture">
+<h2>Software Architecture<a class="headerlink" href="#software-architecture" title="Link to this heading"></a></h2>
+<p><strong>LimeNurse</strong> relies on standard linux services. It uses systemd services to ensure robustness and persistence of the deployment</p>
+<a class="reference internal image-reference" href="_images/software-architecture.png"><img alt="Software architecture" src="_images/software-architecture.png" style="width: 800px;" />
+</a>
+<section id="data-link-layer-2-configuration">
+<h3>Data Link Layer (2) configuration<a class="headerlink" href="#data-link-layer-2-configuration" title="Link to this heading"></a></h3>
+<p>USB gadget drivers are activated in the Pi OS to enable ethernet over USB on usb0.
+This is a once shot firmware configuration, persisted by the firmware persistence mechanisms.</p>
+<p>Then the USB descriptors are configurated to mock the limelight ones and make it discoverable by the Control Hub.
+Descriptors setting is managed by a systemd service restarted on Pi start.</p>
+</section>
+<section id="network-layer-3-configuration">
+<h3>Network Layer (3) configuration<a class="headerlink" href="#network-layer-3-configuration" title="Link to this heading"></a></h3>
+<p>IP management services is deployed on both ethernet and USB interfaces.
+Ethernet and USB gateways are assigned fixed IP. IP setting is managed by a systemd service restarted on Pi start.
+Ethernet and USB interfaces expose a DHCP service to provide communcations with development laptop and control hub through an IP in their hosted networks.
+This is a once shot dnsmasq service configuration, persisted by the dnsmasq persistence mechanisms.</p>
+<p>Gateways are assigned names.
+This is managed by a zeroconf based python script.
+The python script regularly update the dns services to make sure the name keep being resolved.
+The resolver script is managed by a systemd service restarted on Pi start.</p>
+</section>
+<section id="transport-layer-4-configuration">
+<h3>Transport Layer (4) configuration<a class="headerlink" href="#transport-layer-4-configuration" title="Link to this heading"></a></h3>
+<p>UDP and TCP unicast forwarding between interfaces are managed using firewall rules. Port 22 on eth 0 is not forwarded to provide ssh services
+The rules setting script is managed by a systemd service restarted on Pi start.</p>
+<p>UDP messages are broadcasted to enable limelight discovery.
+They are not forwarded by iptables and are then managed by a custom Python script.
+The python script is robust to interface loss through limelight disconnection.
+It monitors interface and restore connection and transfer once the interface is back.
+The forwarder script is managed by a systemd service restarted on Pi start.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="considerations.html" class="btn btn-neutral float-left" title="Design considerations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Nadege Lemperiere.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #2b2d2b;
+    }
+    /* Sidebar */
+    .wy-nav-side {
+      background: #2b2d2b;
+    }
+    /* Title color */
+    .wy-menu-vertical header {
+        color: #7ea351;
+    }
+    .wy-menu-vertical p.caption {
+        color: #7ea351;
+    }
+    /* Links color */
+    a {
+        color: #7ea351;
+    }
+    a:hover {
+        color: #7ea351;
+    }
+    a:visited{
+        color: #fc9b67;
+    }
+    /* Table color */
+    .wy-table thead {
+        color: #7ea351;
+    }
+  </style>
+
+
+</body>
+</html>
