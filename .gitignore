@@ -1,0 +1,12 @@
+# Log files
+**/*.log
+**/.DS_Store 
+
+# Temporary files
+**/*.bkp
+**/*.dtmp
+
+# Python fils
+**/__pycache__
+**/_build
+

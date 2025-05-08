@@ -1,0 +1,35 @@
+{% extends "!layout.html" %}
+  {% block footer %} {{ super() }}
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #2b2d2b;
+    }
+    /* Sidebar */
+    .wy-nav-side {
+      background: #2b2d2b;
+    }
+    /* Title color */
+    .wy-menu-vertical header {
+        color: #7ea351;
+    }
+    .wy-menu-vertical p.caption {
+        color: #7ea351;
+    }
+    /* Links color */
+    a {
+        color: #7ea351;
+    }
+    a:hover {
+        color: #7ea351;
+    }
+    a:visited{
+        color: #fc9b67;
+    }
+    /* Table color */
+    .wy-table thead {
+        color: #7ea351;
+    }
+  </style>
+{% endblock %}

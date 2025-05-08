@@ -1,0 +1,12 @@
+[Unit]
+Description=Limelight Naming
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=$DNS_SCRIPT_PATH
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

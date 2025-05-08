@@ -1,0 +1,12 @@
+[Unit]
+Description=Limelight Addressing
+After=local-fs.target
+Before=network.target
+
+[Service]
+Type=oneshot
+ExecStart=$ADDRESS_SCRIPT_PATH
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
