@@ -109,7 +109,7 @@ sudo sed -i -E 's/\s+/ /g' /etc/nsswitch.conf  # Clean up extra whitespace
 
 echo "  ➡️  Updated NSS config to remove mdns entries..."
 
-apt -qq install python3-zeroconf
+apt -qq install -y python3-zeroconf
 
 cp $scriptpath/../data/name_resolver.py /usr/local/bin/name_resolver.py
 
