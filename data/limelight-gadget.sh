@@ -107,14 +107,14 @@ echo "RNDIS" > configs/c.2/strings/0x409/configuration
 echo 250 > configs/c.2/MaxPower
 echo 0xc0 > configs/c.2/bmAttributes
 
-mkdir -p functions/rndis.usb0
-echo "00:1A:2E:F9:08:67" > functions/rndis.usb0/dev_addr
-echo "00:1A:2E:F9:08:66" > functions/rndis.usb0/host_addr
-mkdir -p functions/rndis.usb0/os_desc/interface.rndis
-echo "RNDIS" > functions/rndis.usb0/os_desc/interface.rndis/compatible_id
-echo "5162001" > functions/rndis.usb0/os_desc/interface.rndis/sub_compatible_id
+mkdir -p functions/rndis.usb1
+echo "00:1A:2E:F9:08:67" > functions/rndis.usb1/dev_addr
+echo "00:1A:2E:F9:08:66" > functions/rndis.usb1/host_addr
+mkdir -p functions/rndis.usb1/os_desc/interface.rndis
+echo "RNDIS" > functions/rndis.usb1/os_desc/interface.rndis/compatible_id
+echo "5162001" > functions/rndis.usb1/os_desc/interface.rndis/sub_compatible_id
 
-ln -s functions/rndis.usb0 configs/c.2/
+ln -s functions/rndis.usb1 configs/c.2/
 
 # Link os_desc to RNDIS config after all configs/functions are in place
 ln -s configs/c.2 os_desc
