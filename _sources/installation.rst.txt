@@ -20,7 +20,9 @@ The Raspberry Pi shall have been initialized with a basic OS.
    - Enable SSH through password
 - Flash the card and verify.
 
-**limenurse.local** is the name to use to access the PI through wifi. You are welcome to use any other name you want, as long as it's not limelight.local which we will use later on on the USB interface.
+**limenurse.local** is the name to use to access the PI through wifi. 
+Any other name can be used, as long as it's not limelight.local which we will use later on on the USB interface.
+The installation script will adapt to the chosen name by readiing hostname from the PI installation
 
 Insert the Micro SD card into the Raspberry Pi 5, connect to the Pi through your wifi.
 

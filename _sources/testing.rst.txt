@@ -27,7 +27,7 @@ For the following tests, the pi needs to be connected to the test laptop both th
 
 .. code-block ::
 
-    scripts/02-configure-network-test.sh --source outside --user <ssh user> --password <ssh password> --hostname <limenurse.local>
+    scripts/02-configure-network-test.sh --source outside --user <ssh user> --password <ssh password> --hostname limenurse.local
 
 - Check that limelight.local and limelight.eth.local names resolve to the configured IP
 - Check that limenurse.local resolve to an IP (depending on the wifi router on which Pi is connected to wifi)
