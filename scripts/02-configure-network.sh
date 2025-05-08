@@ -25,7 +25,7 @@ echo "❶ Configuring usb0 and eth0 ip range"
 source $scriptpath/../conf/env
 export ADDRESS_SCRIPT_PATH=/usr/local/bin/limelight-address.sh
 
-envsubst '$ETH_IP_GATEWAY,$USB_IP_GATEWAY' < $scriptpath/../data/limelight-address.sh > $ADDRESS_SCRIPT_PATH
+envsubst '$ETH_IP_GATEWAY,$USB_IP_GATEWAY_LINUX,$USB_IP_GATEWAY_WINDOWS' < $scriptpath/../data/limelight-address.sh > $ADDRESS_SCRIPT_PATH
 chmod +x $ADDRESS_SCRIPT_PATH
 
 echo "  ➡️  Created limelight address script"
@@ -68,10 +68,15 @@ echo "  ➡️  Installed dnsmasq DHCP server "
 
 # 2.1 - Create DHCP server for usb0 
 
-envsubst '$USB_IP_ADDRESSES' < $scriptpath/../data/usb0.conf > /etc/dnsmasq.d/usb0.conf
+envsubst '$USB_IP_ADDRESSES_LINUX' < $scriptpath/../data/usb0.conf > /etc/dnsmasq.d/usb0.conf
 echo "  ➡️  Created DHCP configuration for usb0"
 
-# 2.2 - Create DHCP server for eth0
+# 2.2 - Create DHCP server for usb1
+
+envsubst '$USB_IP_ADDRESSES_WINDOWS' < $scriptpath/../data/usb1.conf > /etc/dnsmasq.d/usb1.conf
+echo "  ➡️  Created DHCP configuration for usb1"
+
+# 2.3 - Create DHCP server for eth0
 
 envsubst '$ETH_IP_ADDRESSES,$ETH_IP_GATEWAY' < $scriptpath/../data/eth0.conf > /etc/dnsmasq.d/eth0.conf
 echo "  ➡️  Created DHCP configuration for eth0"

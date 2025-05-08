@@ -37,6 +37,7 @@ class NameResolver :
 
         self.__interfaces = [ 
             ("usb0", None),
+            ("usb1", None),
             ("eth0", None),
             ("wlan0", None),
         ]
@@ -56,6 +57,7 @@ class NameResolver :
 
         self.__interfaces = [ 
             ("usb0", usb),
+            ("usb1", usb),
             ("eth0", eth),
             ("wlan0", wlan),
         ]
