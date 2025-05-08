@@ -173,7 +173,7 @@ class NameResolver :
                                 new_service = ServiceInfo(
                                     type_="_http._tcp.local.",
                                     name=f"{name}._http._tcp.local.",
-                                    addresses=[inet_aton(current_ip)],
+                                    addresses=[inet_aton(ip)],
                                     port=80,
                                     properties={},
                                     server=name,
