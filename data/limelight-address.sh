@@ -36,14 +36,14 @@ for i in {1..10}; do
 done
 
 if ip link show usb1 > /dev/null 2>&1; then
-    echo "  🔧 Setting static IP for usb0..."
+    echo "  🔧 Setting static IP for usb1..."
     ip addr flush dev usb0 || true
     ip -6 addr flush dev usb0 scope global || true
-    ip addr add $USB_IP_GATEWAY_WINDOWS/24 dev usb0
-    ip link set usb0 up
-    echo "  ➡️  usb0 interface got IP $USB_IP_GATEWAY_WINDOWS"
+    ip addr add $USB_IP_GATEWAY_WINDOWS/24 dev usb1
+    ip link set usb1 up
+    echo "  ➡️  usb1 interface got IP $USB_IP_GATEWAY_WINDOWS"
 else
-    echo "  ❌ usb0 interface not found, skipping IP configuration!"
+    echo "  ❌ usb1 interface not found, skipping IP configuration!"
 fi
 
 # Wait for eth0 to appear (max 10 seconds)
