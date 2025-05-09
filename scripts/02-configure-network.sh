@@ -109,11 +109,26 @@ fi
 sudo sed -i \
     -e 's/^#*use-ipv4=.*/use-ipv4=yes/' \
     -e 's/^#*use-ipv6=.*/use-ipv6=no/' \
-    -e '/^#*allow-interfaces=.*/d' \
     "$AVAHI_CONF"
 
-# Append new allow-interfaces at the end
-echo "allow-interfaces=wlan0" | sudo tee -a "$AVAHI_CONF" > /dev/null
+# Remove all allow-interfaces lines (even commented)
+sed -i '/^[# ]*allow-interfaces=/d' "$AVAHI_CONF"
+
+# Check if [server] section exists
+if grep -q '^\[server\]' "$AVAHI_CONF"; then
+    echo "✅ [server] section found, inserting allow-interfaces under it."
+
+    # Insert allow-interfaces=usb0 under [server]
+    sed -i '/^\[server\]/a allow-interfaces=usb0' "$AVAHI_CONF"
+else
+    echo "⚠️ No [server] section found, appending it at the end."
+
+    # Add the section and setting at end
+    echo "" >> "$AVAHI_CONF"
+    echo "[server]" >> "$AVAHI_CONF"
+    echo "allow-interfaces=usb0" >> "$AVAHI_CONF"
+fi
+
 
 # Restart Avahi
 sudo systemctl restart avahi-daemon
