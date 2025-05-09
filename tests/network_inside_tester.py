@@ -136,7 +136,7 @@ class NetworkInsideTester:
             match = search(r"inet (\d+\.\d+\.\d+\.\d+)/", ip_output)
             if match:
                 current_ip = match.group(1)
-                if current_ip == self.__reference_usb_ip:
+                if current_ip == self.__reference_usb_linux_ip:
                     self.__logger.info("usb0 has expected IP address: " + self.__reference_usb_linux_ip)
                 else:
                     self.__logger.error("usb0 has unexpected IP address: " + current_ip + " (expected " + self.__reference_usb_linux_ip + ")")
@@ -147,7 +147,7 @@ class NetworkInsideTester:
             match = search(r"inet (\d+\.\d+\.\d+\.\d+)/", ip_output)
             if match:
                 current_ip = match.group(1)
-                if current_ip == self.__reference_usb_ip:
+                if current_ip == self.__reference_usb_windows_ip:
                     self.__logger.info("usb1 has expected IP address: " + self.__reference_usb_windows_ip)
                 else:
                     self.__logger.error("usb1 has unexpected IP address: " + current_ip + " (expected " + self.__reference_usb_windows_ip + ")")
