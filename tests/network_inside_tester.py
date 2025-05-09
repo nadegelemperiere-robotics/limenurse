@@ -170,6 +170,22 @@ class NetworkInsideTester:
                 self.__logger.error("--> dnsmasq.service is not active")
                 result = False
 
+            # Check avahi is still active
+            enabled = NetworkInsideTester.run_command(f"systemctl is-enabled avahi-daemon.service")
+            if enabled == "enabled" :
+                self.__logger.info("--> avahi-daemon.service is enabled")
+            else :
+                self.__logger.error("--> avahi-daemon.service is not enabled")
+                result = False
+                
+            active = NetworkInsideTester.run_command(f"systemctl is-active avahi-daemon.service")
+            if active == "active" :
+                self.__logger.info("--> avahi-daemon.service is active")
+            else :
+                self.__logger.error("--> avahi-daemon.service is not active")
+                result = False   
+
+            # Check custom dns management is active
             enabled = NetworkInsideTester.run_command(f"systemctl is-enabled limelight-dns.service")
             if enabled == "enabled" :
                 self.__logger.info("--> limelight-dns.service is enabled")
@@ -184,6 +200,7 @@ class NetworkInsideTester:
                 self.__logger.error("--> limelight-dns.service is not active")
                 result = False   
 
+            # Check that the python script is running
             running = NetworkInsideTester.is_python_command_running("name_resolver.py")
             if running :
                 self.__logger.info("--> Python forwarder is running")

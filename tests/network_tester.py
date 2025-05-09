@@ -47,7 +47,7 @@ class NetworkTester:
 
         Args:
             source (str): Indicates whether tests are run from 'inside' or 'outside' the network.
-            platform (str): OS on which outside tests are executed (windows or linux)
+            platform (str): OS on which outside tests are executed (windows, ios, linux)
             user (str): SSH username (used only for outside tests).
             hostname (str): Hostname or IP address of the remote machine (used only for outside tests).
             password (str): SSH password (used only for outside tests).
