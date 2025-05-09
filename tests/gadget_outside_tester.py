@@ -16,8 +16,9 @@ and comparing them against a known reference.
 # System includes
 from logging                        import getLogger
 from os                             import path
-from subprocess                     import check_output, CalledProcessError, DEVNULL
+from subprocess                     import check_output, CalledProcessError, DEVNULL, run
 from json                           import load, dump
+from xml.etree                      import ElementTree as ET
 
 # Logger configuration settings
 logg_conf_path = path.normpath(path.join(path.dirname(__file__), '../conf/logging.conf'))
@@ -155,6 +156,41 @@ class GadgetOutsideTester:
             self.__logger.info('RUNNING WINDOWS OUTSIDE TESTS')
             result = True
 
+        run(['usbview.exe','/q','/savexml:temp.xml'])
+        if not path.isfile('temp.xml'):
+            self.__logger.error('USB descriptors gathering failed')
+
+        tree = ET.parse('temp.xml')
+        root = tree.getroot()
+
+        usb = {root.tag: GadgetOutsideTester.element_to_dict(root)}
+        descriptors = GadgetOutsideTester.find_usb_device(usb)
+        
+        if descriptors is None:
+            self.__logger.error('--> Could not get limelight descriptors')
+            result = False
+        
+        else :
+            self.__logger.info('--> Usb descriptors found')
+            
+            # Compare the reference descriptors with the actual device descriptors
+            differences = GadgetOutsideTester.deep_compare_dicts(self.__limelight_reference, descriptors)
+            for difference in differences :
+                # Allow known differences such as MAC address and bus device info
+                if difference['reason'] == 'value' and difference['path'] == 'Device Descriptor/Configuration Descriptor[1]/Interface Descriptor[0]/CDC Ethernet/iMacAddress' :
+                    self.__logger.info("----> Difference in MacAdddress is allowed")
+                elif difference['reason'] == 'key' and difference['value'].startswith("Bus") :
+                    self.__logger.info("----> Difference in bus device is allowed")
+                else :
+                    # Log unexpected differences as errors
+                    if difference['reason'] == 'key' :
+                        self.__logger.error("----> Could not find key " + difference['value'] + " in one of the devices")
+                    elif difference['reason'] == 'length' :
+                        self.__logger.error("----> Key " + difference['path'] + " have different lengths : " + difference['1'] + " and " + difference['2'])
+                    elif difference['reason'] == 'value' :
+                        self.__logger.error("----> Mismatch value for path " + difference['path'] + " : " + difference['1'] + " and " + difference['2'])
+                    result = False
+
         return result
 
 
@@ -210,6 +246,22 @@ class GadgetOutsideTester:
                             result = False
 
         return result
+
+    def find_usb_device(data):
+        if isinstance(data, dict):
+            for key, value in data.items():
+                if key == "UsbDevice":
+                    return value
+                result = GadgetOutsideTester.find_usb_device(value)
+                if result is not None:
+                    return result
+        elif isinstance(data, list):
+            for item in data:
+                result =  GadgetOutsideTester.find_usb_device(item)
+                if result is not None:
+                    return result
+        return None
+
 
     def find_device(vendor_id, product_id):
         """
@@ -373,4 +425,26 @@ class GadgetOutsideTester:
                 result.append({ "reason" : "value", "path" : path, "1" : d1, "2" : d2})
             
 
+        return result
+
+    def element_to_dict(elem):
+        result = {}
+        # Add attributes if any
+        if elem.attrib:
+            result["@attributes"] = elem.attrib
+        # Add children
+        children = list(elem)
+        if children:
+            for child in children:
+                child_dict = GadgetOutsideTester.element_to_dict(child)
+                if child.tag in result:
+                    if isinstance(result[child.tag], list):
+                        result[child.tag].append(child_dict)
+                    else:
+                        result[child.tag] = [result[child.tag], child_dict]
+                else:
+                    result[child.tag] = child_dict
+        else:
+            # Add text if no children
+            result = elem.text.strip() if elem.text and elem.text.strip() else result
         return result

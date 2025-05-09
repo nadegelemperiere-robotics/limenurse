@@ -1,232 +1,322 @@
 {
-    "Bus 001 Device 004": "ID 1d6b:0104 Linux Foundation Multifunction Composite Gadget",
-    "Device Descriptor": {
-        "bLength": "18",
-        "bDescriptorType": "1",
-        "bcdUSB": "2.00",
-        "bDeviceClass": "2 Communications",
-        "bDeviceSubClass": "0",
-        "bDeviceProtocol": "0",
-        "bMaxPacketSize0": "64",
-        "idVendor": "0x1d6b Linux Foundation",
-        "idProduct": "0x0104 Multifunction Composite Gadget",
-        "bcdDevice": "40.00",
-        "iManufacturer": "1 Limelight",
-        "iProduct": "2 Raspberry Pi Compute Module 4 Rev 1.1",
-        "iSerial": "3 100000006cf90866",
-        "bNumConfigurations": "2",
-        "Configuration Descriptor": [
+    "@attributes": {
+        "UsbProtocol": "USB 2.0",
+        "DeviceClass": "Net",
+        "DeviceName": "Remote NDIS Compatible Device",
+        "DeviceId": "USB\\VID_1D6B&PID_0104\\100000006CF90866",
+        "HwId": "USB\\VID_1D6B&PID_0104&REV_4000",
+        "ServiceName": "usbrndis6",
+        "UsbPortNumber": "1"
+    },
+    "ConnectionInfo": {
+        "ConnectionInfoStruct": {
+        "ConnectionIndex": "1",
+        "DeviceDescriptor": {
+            "@attributes": {
+            "NumConfigurations": "2",
+            "ISerialNumber": "3",
+            "IProduct": "2",
+            "IManufacturer": "1",
+            "CdDevice": "16384",
+            "IdProduct": "260",
+            "IdVendor": "7531",
+            "MaxPacketSize0": "64",
+            "DeviceProtocol": "0",
+            "DeviceSubclass": "0",
+            "DeviceClass": "2",
+            "CdUSB": "512",
+            "DescriptorType": "1",
+            "Length": "18"
+            }
+        },
+        "CurrentConfigurationValue": "2",
+        "Speed": "2",
+        "SpeedStr": "High",
+        "DeviceIsHub": "false",
+        "DeviceAddress": "0",
+        "NumOfOpenPipes": "3",
+        "UsbConnectionStatus": "DeviceConnected",
+        "DevicePowerState": "PowerDeviceUnspecified",
+        "Pipe": [
             {
-                "bLength": "9",
-                "bDescriptorType": "2",
-                "wTotalLength": "0x004b",
-                "bNumInterfaces": "2",
-                "bConfigurationValue": "2",
-                "iConfiguration": "10 RNDIS",
-                "bmAttributes": "0xc0",
-                "Self": "Powered",
-                "MaxPower": "250mA",
-                "Interface Association": {
-                    "bLength": "8",
-                    "bDescriptorType": "11",
-                    "bFirstInterface": "0",
-                    "bInterfaceCount": "2",
-                    "bFunctionClass": "2 Communications",
-                    "bFunctionSubClass": "6 Ethernet Networking",
-                    "bFunctionProtocol": "0",
-                    "iFunction": "13 RNDIS"
-                },
-                "Interface Descriptor": [
-                    {
-                        "bLength": "9",
-                        "bDescriptorType": "4",
-                        "bInterfaceNumber": "0",
-                        "bAlternateSetting": "0",
-                        "bNumEndpoints": "1",
-                        "bInterfaceClass": "2 Communications",
-                        "bInterfaceSubClass": "2 Abstract (modem)",
-                        "bInterfaceProtocol": "255 Vendor Specific (MSFT RNDIS?)",
-                        "iInterface": "11 RNDIS Communications Control",
-                        "CDC Header": {
-                            "bcdCDC": "1.10"
-                        },
-                        "CDC Call Management": {
-                            "bmCapabilities": "0x00",
-                            "bDataInterface": "1"
-                        },
-                        "CDC ACM": {
-                            "bmCapabilities": "0x00"
-                        },
-                        "CDC Union": {
-                            "bMasterInterface": "0",
-                            "bSlaveInterface": "1"
-                        },
-                        "Endpoint Descriptor": {
-                            "bLength": "7",
-                            "bDescriptorType": "5",
-                            "bEndpointAddress": "0x82  EP 2 IN",
-                            "bmAttributes": "3",
-                            "Transfer": "Type            Interrupt",
-                            "Synch": "Type               None",
-                            "Usage": "Type               Data",
-                            "wMaxPacketSize": "0x0008  1x 8 bytes",
-                            "bInterval": "9"
-                        }
-                    },
-                    {
-                        "bLength": "9",
-                        "bDescriptorType": "4",
-                        "bInterfaceNumber": "1",
-                        "bAlternateSetting": "0",
-                        "bNumEndpoints": "2",
-                        "bInterfaceClass": "10 CDC Data",
-                        "bInterfaceSubClass": "0",
-                        "bInterfaceProtocol": "0",
-                        "iInterface": "12 RNDIS Ethernet Data",
-                        "Endpoint Descriptor": [
-                            {
-                                "bLength": "7",
-                                "bDescriptorType": "5",
-                                "bEndpointAddress": "0x81  EP 1 IN",
-                                "bmAttributes": "2",
-                                "Transfer": "Type            Bulk",
-                                "Synch": "Type               None",
-                                "Usage": "Type               Data",
-                                "wMaxPacketSize": "0x0200  1x 512 bytes",
-                                "bInterval": "0"
-                            },
-                            {
-                                "bLength": "7",
-                                "bDescriptorType": "5",
-                                "bEndpointAddress": "0x01  EP 1 OUT",
-                                "bmAttributes": "2",
-                                "Transfer": "Type            Bulk",
-                                "Synch": "Type               None",
-                                "Usage": "Type               Data",
-                                "wMaxPacketSize": "0x0200  1x 512 bytes",
-                                "bInterval": "0"
-                            }
-                        ]
-                    }
-                ]
+            "EndpointDescriptor": {
+                "@attributes": {
+                "EndpointPacketInfo": "1 transactions per microframe, 8 max bytes",
+                "EndpointType": "Interrupt Transfer Type",
+                "EndpointId": "2",
+                "EndpointDirection": "In",
+                "SyncAddress": "0",
+                "WInterval": "0",
+                "Interval": "9",
+                "MaxPacketSize": "8",
+                "Attributes": "3",
+                "EndpointAddress": "130",
+                "DescriptorType": "5",
+                "Length": "7"
+                }
+            },
+            "ScheduleOffset": "0"
             },
             {
-                "bLength": "9",
-                "bDescriptorType": "2",
-                "wTotalLength": "0x0058",
-                "bNumInterfaces": "2",
-                "bConfigurationValue": "1",
-                "iConfiguration": "4 CDC",
-                "bmAttributes": "0xc0",
-                "Self": "Powered",
-                "MaxPower": "250mA",
-                "Interface Association": {
-                    "bLength": "8",
-                    "bDescriptorType": "11",
-                    "bFirstInterface": "0",
-                    "bInterfaceCount": "2",
-                    "bFunctionClass": "2 Communications",
-                    "bFunctionSubClass": "6 Ethernet Networking",
-                    "bFunctionProtocol": "0",
-                    "iFunction": "8 CDC ECM"
-                },
-                "Interface Descriptor": [
-                    {
-                        "bLength": "9",
-                        "bDescriptorType": "4",
-                        "bInterfaceNumber": "0",
-                        "bAlternateSetting": "0",
-                        "bNumEndpoints": "1",
-                        "bInterfaceClass": "2 Communications",
-                        "bInterfaceSubClass": "6 Ethernet Networking",
-                        "bInterfaceProtocol": "0",
-                        "iInterface": "5 CDC Ethernet Control Model (ECM)",
-                        "CDC Header": {
-                            "bcdCDC": "1.10"
-                        },
-                        "CDC Union": {
-                            "bMasterInterface": "0",
-                            "bSlaveInterface": "1"
-                        },
-                        "CDC Ethernet": {
-                            "iMacAddress": "6 (001A2CF90866)",
-                            "bmEthernetStatistics": "0x00000000",
-                            "wMaxSegmentSize": "1514",
-                            "wNumberMCFilters": "0x0000",
-                            "bNumberPowerFilters": "0"
-                        },
-                        "Endpoint Descriptor": {
-                            "bLength": "7",
-                            "bDescriptorType": "5",
-                            "bEndpointAddress": "0x82  EP 2 IN",
-                            "bmAttributes": "3",
-                            "Transfer": "Type            Interrupt",
-                            "Synch": "Type               None",
-                            "Usage": "Type               Data",
-                            "wMaxPacketSize": "0x0010  1x 16 bytes",
-                            "bInterval": "9"
-                        }
-                    },
-                    {
-                        "bLength": "9",
-                        "bDescriptorType": "4",
-                        "bInterfaceNumber": "1",
-                        "bAlternateSetting": "0",
-                        "bNumEndpoints": "0",
-                        "bInterfaceClass": "10 CDC Data",
-                        "bInterfaceSubClass": "0",
-                        "bInterfaceProtocol": "0",
-                        "iInterface": "0"
-                    },
-                    {
-                        "bLength": "9",
-                        "bDescriptorType": "4",
-                        "bInterfaceNumber": "1",
-                        "bAlternateSetting": "1",
-                        "bNumEndpoints": "2",
-                        "bInterfaceClass": "10 CDC Data",
-                        "bInterfaceSubClass": "0",
-                        "bInterfaceProtocol": "0",
-                        "iInterface": "7 CDC Ethernet Data",
-                        "Endpoint Descriptor": [
-                            {
-                                "bLength": "7",
-                                "bDescriptorType": "5",
-                                "bEndpointAddress": "0x81  EP 1 IN",
-                                "bmAttributes": "2",
-                                "Transfer": "Type            Bulk",
-                                "Synch": "Type               None",
-                                "Usage": "Type               Data",
-                                "wMaxPacketSize": "0x0200  1x 512 bytes",
-                                "bInterval": "0"
-                            },
-                            {
-                                "bLength": "7",
-                                "bDescriptorType": "5",
-                                "bEndpointAddress": "0x01  EP 1 OUT",
-                                "bmAttributes": "2",
-                                "Transfer": "Type            Bulk",
-                                "Synch": "Type               None",
-                                "Usage": "Type               Data",
-                                "wMaxPacketSize": "0x0200  1x 512 bytes",
-                                "bInterval": "0"
-                            }
-                        ]
-                    }
-                ]
+            "EndpointDescriptor": {
+                "@attributes": {
+                "EndpointPacketInfo": "512 max bytes",
+                "EndpointType": "Bulk Transfer Type",
+                "EndpointId": "1",
+                "EndpointDirection": "In",
+                "SyncAddress": "0",
+                "WInterval": "0",
+                "Interval": "0",
+                "MaxPacketSize": "512",
+                "Attributes": "2",
+                "EndpointAddress": "129",
+                "DescriptorType": "5",
+                "Length": "7"
+                }
+            },
+            "ScheduleOffset": "0"
+            },
+            {
+            "EndpointDescriptor": {
+                "@attributes": {
+                "EndpointPacketInfo": "512 max bytes",
+                "EndpointType": "Bulk Transfer Type",
+                "EndpointId": "1",
+                "EndpointDirection": "Out",
+                "SyncAddress": "0",
+                "WInterval": "0",
+                "Interval": "0",
+                "MaxPacketSize": "512",
+                "Attributes": "2",
+                "EndpointAddress": "1",
+                "DescriptorType": "5",
+                "Length": "7"
+                }
+            },
+            "ScheduleOffset": "0"
             }
         ]
+        },
+        "IProductStringDescEn": "Raspberry Pi Compute Module 4 Rev 1.1",
+        "DeviceClassDetails": {
+        "DeviceTypeError": "ERROR: device class should be Multi-interface Function 239is used",
+        "SubclassTypeError": "ERROR: device SubClass should be USB Common Sub Class2 when IAD descriptor is used",
+        "DeviceProtocolError": "ERROR: device Protocol should be USB IAD Protocol 1 when IAD descriptor is used",
+        "UvcVersion": "0"
+        },
+        "MaxPacketSizeInBytes": "64",
+        "VendorString": "The Linux Foundation",
+        "ManufacturerString": "Limelight",
+        "ProductString": "Raspberry Pi Compute Module 4 Rev 1.1",
+        "LangIdString": "English (United States)",
+        "SerialString": "100000006cf90866",
+        "ConfigurationCountError": "WARNING: Most host controllers will only work with one configuration per speed"
     },
-    "Device Qualifier (for other device speed)" : {
-        "bLength" : "10",
-        "bDescriptorType" : "6",
-        "bcdUSB" : "2.00",
-        "bDeviceClass" : "2 Communications",
-        "bDeviceSubClass" : "0",
-        "bDeviceProtocol" : "0", 
-        "bMaxPacketSize0" : "64",
-        "bNumConfigurations" : "0"
+    "PortConnector": {
+        "ConnectionIndex": "1",
+        "ActualLength": "154",
+        "UsbPortProperties": {
+        "PortIsUserConnectable": "true",
+        "PortIsDebugCapable": "false"
+        },
+        "CompanionIndex": "0",
+        "CompanionPortNumber": "2",
+        "CompanionHubSymbolicLinkName": "USB#ROOT_HUB30#4&13390efa&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8}"
     },
-    "Device Status" : "0x0000",
-    "(Bus" : "Powered)"
+    "DeviceConfiguration": [
+        {
+        "ConfigurationDescriptor": {
+            "@attributes": {
+            "MaxPower": "125",
+            "BmAttributes": "192",
+            "IConfiguration": "10",
+            "BConfigurationValue": "2",
+            "BNumInterfaces": "2",
+            "WTotalLength": "75",
+            "BDescriptorType": "2",
+            "BLength": "9"
+            },
+            "ConfValueError": "CAUTION: Most host controllers will only work with one configuration per speed",
+            "ConfStringDesc": "RNDIS",
+            "AttributesStr": "Bus Powered",
+            "MaxCurrent": "250 mA"
+        }
+        },
+        {
+        "IadDescriptor": {
+            "@attributes": {
+            "IFunction": "13",
+            "BFunctionProtocol": "0",
+            "BFunctionSubclass": "6",
+            "BFunctionClass": "2",
+            "BInterfaceCount": "2",
+            "BFirstInterface": "0",
+            "BDescriptorType": "11",
+            "BLength": "8"
+            },
+            "FunctionDetails": {
+            "DeviceClass": "Communications (CDC Control) USB Device"
+            },
+            "StringDesc": "RNDIS"
+        }
+        },
+        {
+        "InterfaceDescriptor": {
+            "@attributes": {
+            "WNumClasses": "0",
+            "IInterface": "11",
+            "BInterfaceProtocol": "255",
+            "BInterfaceSubclass": "2",
+            "BInterfaceClass": "2",
+            "BNumEndpoints": "1",
+            "BAlternateSetting": "0",
+            "BInterfaceNumber": "0",
+            "BDescriptorType": "4",
+            "BLength": "9"
+            },
+            "InterfaceDetails": {
+            "DeviceClass": "Communications (CDC Control) USB Device"
+            },
+            "StringDesc": "RNDIS Communications Control"
+        },
+        "EndpointDescriptor": {
+            "@attributes": {
+            "EndpointPacketInfo": "513 max bytes",
+            "EndpointType": "Control Transfer Type",
+            "EndpointId": "0",
+            "EndpointDirection": "Out",
+            "SyncAddress": "11",
+            "WInterval": "65282",
+            "Interval": "0",
+            "MaxPacketSize": "513",
+            "Attributes": "0",
+            "EndpointAddress": "0",
+            "DescriptorType": "4",
+            "Length": "9"
+            }
+        }
+        },
+        {
+        "DeviceDetails": {
+            "DeviceClass": "Physical Interface USB Device"
+        }
+        },
+        {
+        "DeviceDetails": {
+            "DeviceClass": "Monitor USB Device Interface Class*** (This may be obsolete)"
+        }
+        },
+        {
+        "DeviceDetails": {
+            "DeviceClass": "Interface Class unknown : 36"
+        }
+        },
+        {
+        "DeviceDetails": {
+            "DeviceClass": "Printer USB Device"
+        }
+        },
+        {
+        "EndpointDescriptor": {
+            "@attributes": {
+            "EndpointPacketInfo": "1 transactions per microframe, 8 max bytes",
+            "EndpointType": "Interrupt Transfer Type",
+            "EndpointId": "2",
+            "EndpointDirection": "In",
+            "SyncAddress": "0",
+            "WInterval": "0",
+            "Interval": "9",
+            "MaxPacketSize": "8",
+            "Attributes": "3",
+            "EndpointAddress": "130",
+            "DescriptorType": "5",
+            "Length": "7"
+            }
+        }
+        },
+        {
+        "InterfaceDescriptor": {
+            "@attributes": {
+            "WNumClasses": "0",
+            "IInterface": "12",
+            "BInterfaceProtocol": "0",
+            "BInterfaceSubclass": "0",
+            "BInterfaceClass": "10",
+            "BNumEndpoints": "2",
+            "BAlternateSetting": "0",
+            "BInterfaceNumber": "1",
+            "BDescriptorType": "4",
+            "BLength": "9"
+            },
+            "InterfaceDetails": {
+            "DeviceClass": "CDC Data USB Device"
+            },
+            "StringDesc": "RNDIS Ethernet Data"
+        },
+        "EndpointDescriptor": {
+            "@attributes": {
+            "EndpointPacketInfo": "514 max bytes",
+            "EndpointType": "Control Transfer Type",
+            "EndpointId": "1",
+            "EndpointDirection": "Out",
+            "SyncAddress": "12",
+            "WInterval": "0",
+            "Interval": "0",
+            "MaxPacketSize": "2562",
+            "Attributes": "0",
+            "EndpointAddress": "1",
+            "DescriptorType": "4",
+            "Length": "9"
+            }
+        }
+        },
+        {
+        "EndpointDescriptor": {
+            "@attributes": {
+            "EndpointPacketInfo": "512 max bytes",
+            "EndpointType": "Bulk Transfer Type",
+            "EndpointId": "1",
+            "EndpointDirection": "In",
+            "SyncAddress": "0",
+            "WInterval": "0",
+            "Interval": "0",
+            "MaxPacketSize": "512",
+            "Attributes": "2",
+            "EndpointAddress": "129",
+            "DescriptorType": "5",
+            "Length": "7"
+            }
+        }
+        },
+        {
+        "EndpointDescriptor": {
+            "@attributes": {
+            "EndpointPacketInfo": "512 max bytes",
+            "EndpointType": "Bulk Transfer Type",
+            "EndpointId": "1",
+            "EndpointDirection": "Out",
+            "SyncAddress": "0",
+            "WInterval": "0",
+            "Interval": "0",
+            "MaxPacketSize": "512",
+            "Attributes": "2",
+            "EndpointAddress": "1",
+            "DescriptorType": "5",
+            "Length": "7"
+            }
+        }
+        }
+    ],
+    "ConnectionInfoV2": {
+        "ConnectionIndex": "1",
+        "Length": "16",
+        "Usb110Supported": "true",
+        "Usb200Supported": "true",
+        "Usb300Supported": "false",
+        "DeviceIsOperatingAtSuperSpeedOrHigher": "false",
+        "DeviceIsSuperSpeedCapableOrHigher": "false",
+        "DeviceIsOperatingAtSuperSpeedPlusOrHigher": "false",
+        "DeviceIsSuperSpeedPlusCapableOrHigher": "false"
+    }
 }
+              
