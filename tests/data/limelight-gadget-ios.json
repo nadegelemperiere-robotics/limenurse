@@ -1,0 +1,14 @@
+{
+    "Raspberry Pi Compute Module 4 Rev 1.1": {
+        "Product ID": "0x0104",
+        "Vendor ID": "0x1d6b  (The Linux Foundation)",
+        "Version": "40.00",
+        "Serial Number": "100000006cf90866",
+        "Speed": "Up to 480 Mb/s",
+        "Manufacturer": "Limelight",
+        "Location ID": "0x00100000 / 1",
+        "Current Available (mA)": "500",
+        "Current Required (mA)": "250",
+        "Extra Operating Current (mA)": "0"
+    }
+}
