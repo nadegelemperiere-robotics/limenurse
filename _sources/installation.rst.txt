@@ -51,7 +51,7 @@ It's performed by a bash script which will reboot the PI once and has to be rela
 - Enable USB device mode in the Raspberry Pi firmware
 - Load necessary kernel modules (dwc2)
 - Set device-tree overlays
-- Install the `limelight-gadget.sh`_ script to mock limelight USB descriptors and force usb0 gateway IP address
+- Install the `limelight-gadget.sh`_ script to mock limelight USB descriptors on both ecm on usb0 and rndis on usb1 interfaces 
 - Install the systemd `limelight-gadget.service`_ to start and persist the script
 
 .. _`scripts/01-configure-gadget.sh`: ../scripts/01-configure-gadget.sh
@@ -67,11 +67,13 @@ The second step is to deploy network management services on both eth0 and usb0
   
   sudo scripts/02-configure-network.sh  
 
+- Install the `name_resolver.py`_ script to manage name resolution on usb and ethernet interfaces
 - Configure dnsmasq to offer DHCP services on both interfaces and allow laptop to communicate sith those interfaces by getting an IP address on thei network
 - Restrict the current Pi name mangement system to the wifi wlan0 interface
-- Publish limelight.local name on usb0 gateway and limelight.eth.local on eth0 gateway
+- Publish limelight.local name on usb0 gateway and limelight.eth.local on eth0 gateway using a custom python script
 
 .. _`scripts/02-configure-network.sh`: scripts/02-configure-network.sh
+.. _`name_resolver.py`: ../data/name_resolver.py
 
 After the reboot, the PI is accessible from wifi, ethernet and usb gadget interfaces with different names :
 
@@ -79,18 +81,10 @@ After the reboot, the PI is accessible from wifi, ethernet and usb gadget interf
 - The ethernet eth0 interface gets **limelight.eth.local** name 
 - The USB gadget usb0 interface gets **limelight.local** name to fully mock the PI
 
-ssh login from development laptop through eth0 interface shall now be done using
-
-.. code-block:: bash
-  
-  ssh -o ConnectTimeout=5 user@limelight.eth.local
-
-This command line makes sure the dns request accepts IPv4 answer and does not wait indefinitely to an IPv6 answer.
-
 Transport Layer Deployment
 --------------------------
 
-The thirs step is to launch forward data between interfaces
+The third step is to launch forward data between interfaces
 
 .. code-block:: bash 
   
