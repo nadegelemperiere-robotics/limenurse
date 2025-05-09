@@ -47,7 +47,7 @@ class RoutingInsideTester:
 
         self.__logger.info('CONFIGURING INSIDE ROUTING TEST')
 
-        self.__is_ready = False
+        self.__is_ready = True
 
     def run(self) :
         """

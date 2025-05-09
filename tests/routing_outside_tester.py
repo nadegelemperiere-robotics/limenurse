@@ -90,7 +90,7 @@ class RoutingOutsideTester:
             self.__logger.error("Unknown platform " + platform + " shall be windows ,linux or ios")
 
         # Set readiness to True only if both IP addresses are found
-        if len(self.__reference_eth_ip) != 0 and len(self.__reference_usb_windows_ip) != 0 and len(self.__reference_usb_linux_ip) != 0:
+        if len(self.__reference_eth_ip) != 0 and len(self.__reference_usb_ip) != 0:
             self.__is_ready = True
 
 
@@ -109,6 +109,7 @@ class RoutingOutsideTester:
             result = True
 
             rest_api_check = self.__check_rest_api()
+            print(rest_api_check)
             if not rest_api_check : result = False
 
             webclient_check = self.__check_client()
@@ -154,7 +155,7 @@ class RoutingOutsideTester:
                     self.__logger.error(f"HTTP client access failed on {name}:5801 with error: {e}")
                     result = False
 
-            return result
+        return result
 
     def __check_rest_api(self) : 
         """
@@ -171,7 +172,7 @@ class RoutingOutsideTester:
                 limelights.append(ip)
 
         if len(limelights) != 2 :
-            self.__logger.error('--> Found ' + len(limelights) + ' limelight interfaces instead of 2')
+            self.__logger.error('--> Found ' + str(len(limelights)) + ' limelight interfaces instead of 2')
             result = False
         if self.__reference_eth_ip not in limelights :
             self.__logger.error('--> Ethernet interface for limelight not found')

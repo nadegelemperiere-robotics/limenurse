@@ -79,15 +79,19 @@ class NetworkOutsideTester:
                 usb_windows_ip= match.group(1)
         
         self.__shall_test_names = True
+        self.__shall_use_sshpass = True
         
         if(platform == 'windows') : 
             self.__shall_test_names = False
+            self.__shall_use_sshpass = False
             self.__reference_usb_ip = usb_windows_ip
         elif (platform == 'linux') : 
             self.__shall_test_names = True
+            self.__shall_use_sshpass = True
             self.__reference_usb_ip = usb_linux_ip
         elif (platform == 'ios') : 
             self.__shall_test_names = True
+            self.__shall_use_sshpass = True
             self.__reference_usb_ip = usb_linux_ip
         else :
             self.__logger.error("Unknown platform " + platform + " shall be windows ,linux or ios")
@@ -179,14 +183,14 @@ class NetworkOutsideTester:
                 self.__logger.error('--> Wlan name not pingable')
                 result = False
             
-            can_login = NetworkOutsideTester.test_ssh(self.__reference_eth_ip, self.__user, self.__password)
+            can_login = NetworkOutsideTester.test_ssh(self.__reference_eth_ip, self.__user, self.__password, self.__shall_use_sshpass)
             if can_login :
                 self.__logger.info('--> Login with ethernet ip is possible ')
             else :
                 self.__logger.error('--> Login with ethernet ip is not possible')
                 result = False
 
-            can_login = NetworkOutsideTester.test_ssh(wlan_ip, self.__user, self.__password)
+            can_login = NetworkOutsideTester.test_ssh(wlan_ip, self.__user, self.__password, self.__shall_use_sshpass)
             if can_login :
                 self.__logger.info('--> Login with wlan ip is possible ')
             else :
@@ -194,7 +198,7 @@ class NetworkOutsideTester:
                 result = False
 
             if self.__shall_test_names : 
-                can_login = NetworkOutsideTester.test_ssh("limelight.eth.local", self.__user, self.__password)
+                can_login = NetworkOutsideTester.test_ssh("limelight.eth.local", self.__user, self.__password, self.__shall_use_sshpass)
                 if can_login :
                     self.__logger.info('--> Login with ethernet name is possible ')
                 else :
@@ -202,7 +206,7 @@ class NetworkOutsideTester:
                     result = False
 
      
-            can_login = NetworkOutsideTester.test_ssh(self.__hostname + '.local', self.__user, self.__password)
+            can_login = NetworkOutsideTester.test_ssh(self.__hostname + '.local', self.__user, self.__password, self.__shall_use_sshpass)
             if can_login :
                 self.__logger.info('--> Login with wlan name is possible ')
             else :
@@ -251,11 +255,12 @@ class NetworkOutsideTester:
             ip = gethostbyname(hostname)
             result = ip
         except Exception as e:
+            print(str(e))
             result = ""
 
         return result
 
-    def test_ssh(hostname, user, password):
+    def test_ssh(hostname, user, password, usesshpass):
         """
         Attempt an SSH login to verify connectivity and credentials.
 
@@ -270,12 +275,20 @@ class NetworkOutsideTester:
         result = False
 
         try:
-            ssh = run(["sshpass", "-p", password, "ssh","-o","StrictHostKeyChecking=no", f"{user}@{hostname}", "exit"], stdout=PIPE, stderr=PIPE)
-            if ssh.returncode != 0:
-                result = False
+            if usesshpass : 
+                ssh = run(["sshpass", "-p", password, "ssh","-o","StrictHostKeyChecking=no", f"{user}@{hostname}", "exit"], stdout=PIPE, stderr=PIPE)
+                if ssh.returncode != 0:
+                    result = False
+                else :
+                    result = True
             else :
-                result = True
+                ssh = run(["ssh","-o","StrictHostKeyChecking=no", f"{user}@{hostname}", "exit"], stdout=PIPE, stderr=PIPE)
+                if ssh.returncode != 0:
+                    result = False
+                else :
+                    result = True
         except Exception as e:
+            print(str(e))
             result = False
 
         return result
