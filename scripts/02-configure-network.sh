@@ -118,15 +118,15 @@ sed -i '/^[# ]*allow-interfaces=/d' "$AVAHI_CONF"
 if grep -q '^\[server\]' "$AVAHI_CONF"; then
     echo "✅ [server] section found, inserting allow-interfaces under it."
 
-    # Insert allow-interfaces=usb0 under [server]
-    sed -i '/^\[server\]/a allow-interfaces=usb0' "$AVAHI_CONF"
+    # Insert allow-interfaces=wlan0 under [server]
+    sed -i '/^\[server\]/a allow-interfaces=wlan0' "$AVAHI_CONF"
 else
     echo "⚠️ No [server] section found, appending it at the end."
 
     # Add the section and setting at end
     echo "" >> "$AVAHI_CONF"
     echo "[server]" >> "$AVAHI_CONF"
-    echo "allow-interfaces=usb0" >> "$AVAHI_CONF"
+    echo "allow-interfaces=wlan0" >> "$AVAHI_CONF"
 fi
 
 
