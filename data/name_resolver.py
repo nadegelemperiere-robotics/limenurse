@@ -38,18 +38,16 @@ class NameResolver :
         self.__interfaces = [ 
             ("usb0", None),
             ("usb1", None),
-            ("eth0", None),
-            ("wlan0", None),
+            ("eth0", None)
         ]
 
-    def configure(self, usb, eth, wlan) :
+    def configure(self, usb, eth) :
         """
         Configure the forwarder with source and destination IPs and interfaces.
 
         Parameters:
         - usb: Name to publish on usb interface 
-        - eth: Name to publish on ethernet interface 
-        - wlan: Name to publish on wifi interface 
+        - eth: Name to publish on ethernet interface
         """
 
         self.__services = []
@@ -58,8 +56,7 @@ class NameResolver :
         self.__interfaces = [ 
             ("usb0", usb),
             ("usb1", usb),
-            ("eth0", eth),
-            ("wlan0", wlan),
+            ("eth0", eth)
         ]
 
         handler = RotatingFileHandler('/var/log/name_forwarder.log', maxBytes=5*1024*1024, backupCount=3)
@@ -229,13 +226,12 @@ if __name__ == "__main__":
     parser = ArgumentParser(description="Name resolver for Limelight access through multiple interfaces")
     parser.add_argument("--usb", dest="usb", required=True, help="Name to publish on usb gadget interface")
     parser.add_argument("--eth", dest="eth", required=True, help="Name to publish on ethernet interface")
-    parser.add_argument("--wlan", dest="wlan", required=True, help="Name to publish on wifi interface")
 
 
     args = parser.parse_args()
 
     # Configure and start the forwarder
-    resolver.configure(args.usb, args.eth, args.wlan)
+    resolver.configure(args.usb, args.eth)
 
     started = False
     while not started : 
