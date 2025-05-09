@@ -49,22 +49,6 @@ class RoutingInsideTester:
 
         self.__is_ready = False
 
-        self.__reference_eth_ip = ""
-        with open(env_path, 'r') as file:
-            match = search(r'ETH_IP_GATEWAY=([\d\.]+)', file.read())
-            if match : 
-                self.__reference_eth_ip = match.group(1)
-
-        self.__reference_usb_ip = ""
-        with open(env_path, 'r') as file:
-            match = search(r'USB_IP_GATEWAY=([\d\.]+)', file.read())
-            if match : 
-                self.__reference_usb_ip = match.group(1)
-
-        if len(self.__reference_eth_ip) != 0 and len(self.__reference_usb_ip) != 0 :
-            self.__is_ready = True
-
-
     def run(self) :
         """
         Executes the internal routing test if configuration is ready.

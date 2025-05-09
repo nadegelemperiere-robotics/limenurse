@@ -66,14 +66,22 @@ class NetworkInsideTester:
                 self.__reference_eth_ip = match.group(1)
 
         # Read the USB gateway IP address from the environment file
-        self.__reference_usb_ip = ""
+        self.__reference_usb_linux_ip = ""
         with open(env_path, 'r') as file:
-            match = search(r'USB_IP_GATEWAY=([\d\.]+)', file.read())
+            match = search(r'USB_IP_GATEWAY_LINUX=([\d\.]+)', file.read())
             if match : 
-                self.__reference_usb_ip = match.group(1)
+                self.__reference_usb_linux_ip = match.group(1)
+
+        # Read the USB gateway IP address from the environment file
+        self.__reference_usb_windows_ip = ""
+        with open(env_path, 'r') as file:
+            match = search(r'USB_IP_GATEWAY_WINDOWS=([\d\.]+)', file.read())
+            if match : 
+                self.__reference_usb_windows_ip = match.group(1)
+        
 
         # Set readiness to True only if both IP addresses are found
-        if len(self.__reference_eth_ip) != 0 and len(self.__reference_usb_ip) != 0 :
+        if len(self.__reference_eth_ip) != 0 and len(self.__reference_usb_windows_ip) != 0 and len(self.__reference_usb_linux_ip) != 0:
             self.__is_ready = True
 
 
@@ -129,11 +137,22 @@ class NetworkInsideTester:
             if match:
                 current_ip = match.group(1)
                 if current_ip == self.__reference_usb_ip:
-                    self.__logger.info("usb0 has expected IP address: " + self.__reference_usb_ip)
+                    self.__logger.info("usb0 has expected IP address: " + self.__reference_usb_linux_ip)
                 else:
-                    self.__logger.error("usb0 has unexpected IP address: " + current_ip + " (expected " + self.__reference_usb_ip + ")")
+                    self.__logger.error("usb0 has unexpected IP address: " + current_ip + " (expected " + self.__reference_usb_linux_ip + ")")
             else:
                 self.__logger.error("usb0 interface not found or no IP address assigned")
+
+            ip_output = NetworkInsideTester.run_command("ip addr show usb1")
+            match = search(r"inet (\d+\.\d+\.\d+\.\d+)/", ip_output)
+            if match:
+                current_ip = match.group(1)
+                if current_ip == self.__reference_usb_ip:
+                    self.__logger.info("usb1 has expected IP address: " + self.__reference_usb_windows_ip)
+                else:
+                    self.__logger.error("usb1 has unexpected IP address: " + current_ip + " (expected " + self.__reference_usb_windows_ip + ")")
+            else:
+                self.__logger.error("usb1 interface not found or no IP address assigned")
 
             # Check if dnsmasq service is enabled
             enabled = NetworkInsideTester.run_command(f"systemctl is-enabled dnsmasq.service")
@@ -179,7 +198,6 @@ class NetworkInsideTester:
                 self.__logger.error("--> Error found in  forwarder log")
                 result = False   
             
-
             return result
         
     
