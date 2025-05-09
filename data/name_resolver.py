@@ -106,7 +106,8 @@ class NameResolver :
                     )
                     self.__dns.register_service(service)
                     self.__services.append(service)
-                    info(" Publishing name " + name + " on " + interface)
+                    for ip in ips :
+                        info(" Publishing name " + name + " on " + str(inet_ntoa(ip)))
 
             except Exception as e :
                 result = False 
@@ -145,7 +146,7 @@ class NameResolver :
                                 shall_update = False
                                 for ip in ips :
                                     if not ip in matching_service.addresses :
-                                        info(f"New IP found for {name} changed from {ip}, updating service.")
+                                        info(f"New IP found for {name} changed from {inet_ntoa(ip)}, updating service.")
                                         shall_update = True
                                 for address in matching_service.addresses :
                                     if not address in ips :
@@ -172,7 +173,7 @@ class NameResolver :
                                     self.__dns.update_service(matching_service)
                                     services.append(matching_service)
                                     for ip in ips : 
-                                        info(f"Refreshed service for {name} at {ip}")
+                                        info(f"Refreshed service for {name} at {inet_ntoa(ip)}")
                             else:
                                 # No service published yet, possibly reinitialization
                                 new_service = ServiceInfo(
@@ -186,7 +187,7 @@ class NameResolver :
                                 self.__dns.register_service(new_service)
                                 services.append(new_service)
                                 for ip in ips : 
-                                    info(f"Registered new service for {name} at {ip}")
+                                    info(f"Registered new service for {name} at {inet_ntoa(ip)}")
 
                     except Exception as e:
                         error(f"Error updating service for {name}: {e}")
