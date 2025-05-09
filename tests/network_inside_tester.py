@@ -66,14 +66,22 @@ class NetworkInsideTester:
                 self.__reference_eth_ip = match.group(1)
 
         # Read the USB gateway IP address from the environment file
-        self.__reference_usb_ip = ""
+        self.__reference_usb_linux_ip = ""
         with open(env_path, 'r') as file:
-            match = search(r'USB_IP_GATEWAY=([\d\.]+)', file.read())
+            match = search(r'USB_IP_GATEWAY_LINUX=([\d\.]+)', file.read())
             if match : 
-                self.__reference_usb_ip = match.group(1)
+                self.__reference_usb_linux_ip = match.group(1)
+
+        # Read the USB gateway IP address from the environment file
+        self.__reference_usb_windows_ip = ""
+        with open(env_path, 'r') as file:
+            match = search(r'USB_IP_GATEWAY_WINDOWS=([\d\.]+)', file.read())
+            if match : 
+                self.__reference_usb_windows_ip = match.group(1)
+        
 
         # Set readiness to True only if both IP addresses are found
-        if len(self.__reference_eth_ip) != 0 and len(self.__reference_usb_ip) != 0 :
+        if len(self.__reference_eth_ip) != 0 and len(self.__reference_usb_windows_ip) != 0 and len(self.__reference_usb_linux_ip) != 0:
             self.__is_ready = True
 
 
@@ -128,12 +136,23 @@ class NetworkInsideTester:
             match = search(r"inet (\d+\.\d+\.\d+\.\d+)/", ip_output)
             if match:
                 current_ip = match.group(1)
-                if current_ip == self.__reference_usb_ip:
-                    self.__logger.info("usb0 has expected IP address: " + self.__reference_usb_ip)
+                if current_ip == self.__reference_usb_linux_ip:
+                    self.__logger.info("usb0 has expected IP address: " + self.__reference_usb_linux_ip)
                 else:
-                    self.__logger.error("usb0 has unexpected IP address: " + current_ip + " (expected " + self.__reference_usb_ip + ")")
+                    self.__logger.error("usb0 has unexpected IP address: " + current_ip + " (expected " + self.__reference_usb_linux_ip + ")")
             else:
                 self.__logger.error("usb0 interface not found or no IP address assigned")
+
+            ip_output = NetworkInsideTester.run_command("ip addr show usb1")
+            match = search(r"inet (\d+\.\d+\.\d+\.\d+)/", ip_output)
+            if match:
+                current_ip = match.group(1)
+                if current_ip == self.__reference_usb_windows_ip:
+                    self.__logger.info("usb1 has expected IP address: " + self.__reference_usb_windows_ip)
+                else:
+                    self.__logger.error("usb1 has unexpected IP address: " + current_ip + " (expected " + self.__reference_usb_windows_ip + ")")
+            else:
+                self.__logger.error("usb1 interface not found or no IP address assigned")
 
             # Check if dnsmasq service is enabled
             enabled = NetworkInsideTester.run_command(f"systemctl is-enabled dnsmasq.service")
@@ -151,6 +170,22 @@ class NetworkInsideTester:
                 self.__logger.error("--> dnsmasq.service is not active")
                 result = False
 
+            # Check avahi is still active
+            enabled = NetworkInsideTester.run_command(f"systemctl is-enabled avahi-daemon.service")
+            if enabled == "enabled" :
+                self.__logger.info("--> avahi-daemon.service is enabled")
+            else :
+                self.__logger.error("--> avahi-daemon.service is not enabled")
+                result = False
+                
+            active = NetworkInsideTester.run_command(f"systemctl is-active avahi-daemon.service")
+            if active == "active" :
+                self.__logger.info("--> avahi-daemon.service is active")
+            else :
+                self.__logger.error("--> avahi-daemon.service is not active")
+                result = False   
+
+            # Check custom dns management is active
             enabled = NetworkInsideTester.run_command(f"systemctl is-enabled limelight-dns.service")
             if enabled == "enabled" :
                 self.__logger.info("--> limelight-dns.service is enabled")
@@ -165,6 +200,7 @@ class NetworkInsideTester:
                 self.__logger.error("--> limelight-dns.service is not active")
                 result = False   
 
+            # Check that the python script is running
             running = NetworkInsideTester.is_python_command_running("name_resolver.py")
             if running :
                 self.__logger.info("--> Python forwarder is running")
@@ -179,7 +215,6 @@ class NetworkInsideTester:
                 self.__logger.error("--> Error found in  forwarder log")
                 result = False   
             
-
             return result
         
     
@@ -206,7 +241,7 @@ class NetworkInsideTester:
         try:
             with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                 for line in f:
-                    if '[ERROR]' in line:
+                    if ' - ERROR -' in line:
                         result = False
         except Exception as e:
             result = False

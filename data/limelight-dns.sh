@@ -5,7 +5,7 @@ set -e
 
 echo ""
 echo "Launch name resolver"
-python3 /usr/local/bin/name_resolver.py --usb limelight.local  --eth limelight.eth.local --wlan $(hostname).local > /var/log/name_forwarder.log 2>&1 &  # usb0
+python3 /usr/local/bin/name_resolver.py --usb limelight.local  --eth limelight.eth.local > /var/log/name_forwarder.log 2>&1 &  # usb0
 
 echo ""
 echo "🎉 Limelight dns setup complete!"

@@ -54,12 +54,13 @@ class GadgetTester:
         self.__outside = GadgetOutsideTester()
         self.__inside = GadgetInsideTester()
 
-    def configure(self, source) :
+    def configure(self, source, platform) :
         """
         Configure the test setup for a specific source.
 
         Args:
             source (str): Either 'inside' or 'outside'.
+            platform (str): OS on which outside tests are executed (windows, ios, linux)
 
         Based on the selected source, this prepares the corresponding tester instance
         for execution.
@@ -72,7 +73,7 @@ class GadgetTester:
             self.__inside.configure()
         elif source == GadgetTester.sSourceOutside :
             self.__logger.info('--> Setting outside tests up')
-            self.__outside.configure()
+            self.__outside.configure(platform)
         else :
             # Log an error if the source is not recognized
             self.__logger.error('--> Unknown test source : Giving up')
@@ -117,16 +118,18 @@ def main():
 # pylint: disable=R0913
 @main.command()
 @option('--source')
-def run(source):
+@option('--platform')
+def run(source, platform):
     """
     Run the gadget test command with the provided source.
 
     Args:
         source (str): The source perspective for the test ('inside' or 'outside').
+        platform (str): OS on which outside tests are executed (windows, ios, linux)
     """
 
     tester = GadgetTester()
-    tester.configure(source)
+    tester.configure(source, platform)
     tester.run()
 
 if __name__ == "__main__":

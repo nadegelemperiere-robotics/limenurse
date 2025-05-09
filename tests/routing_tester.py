@@ -49,11 +49,12 @@ class RoutingTester:
         self.__outside = RoutingOutsideTester()
         self.__inside = RoutingInsideTester()
 
-    def configure(self, source) :
+    def configure(self, source, platform) :
         """Prepare the test environment based on selected source direction.
 
         Args:
             source (str): Either 'inside' or 'outside' indicating test source perspective.
+            platform (str): OS on which outside tests are executed (windows, ios, linux)
         """
 
         self.__logger.info('CONFIGURING ROUTING TEST')
@@ -63,7 +64,7 @@ class RoutingTester:
             self.__inside.configure()
         elif source == RoutingTester.sSourceOutside :
             self.__logger.info('--> Setting outside tests up')
-            self.__outside.configure()
+            self.__outside.configure(platform)
         else :
             self.__logger.error('--> Unknown test source : Giving up')
 
@@ -98,15 +99,17 @@ def main():
 # pylint: disable=R0913
 @main.command()
 @option('--source')
-def run(source):
+@option('--platform')
+def run(source, platform):
     """Run the routing test for a given traffic source.
 
     Args:
         source (str): The origin of the traffic for testing, either 'inside' or 'outside'.
+        platform (str): OS on which outside tests are executed (windows, ios, linux)
     """
 
     tester = RoutingTester()
-    tester.configure(source)
+    tester.configure(source, platform)
     tester.run()
 
 if __name__ == "__main__":

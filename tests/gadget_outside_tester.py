@@ -16,14 +16,16 @@ and comparing them against a known reference.
 # System includes
 from logging                        import getLogger
 from os                             import path
-from subprocess                     import check_output, CalledProcessError, DEVNULL
-from json                           import load
-from re                             import search
+from subprocess                     import check_output, CalledProcessError, DEVNULL, run
+from json                           import load, dump
+from xml.etree                      import ElementTree as ET
 
 # Logger configuration settings
 logg_conf_path = path.normpath(path.join(path.dirname(__file__), '../conf/logging.conf'))
 env_path = path.normpath(path.join(path.dirname(__file__), '../conf/env'))
-limelight_descriptors_path = path.normpath(path.join(path.dirname(__file__), '../data/limelight-gadget.json'))
+limelight_linux_descriptors_path = path.normpath(path.join(path.dirname(__file__), 'data/limelight-gadget-linux.json'))
+limelight_ios_descriptors_path = path.normpath(path.join(path.dirname(__file__), 'data/limelight-gadget-ios.json'))
+limelight_windows_descriptors_path = path.normpath(path.join(path.dirname(__file__), 'data/limelight-gadget-windows.json'))
 
 class GadgetOutsideTester:
     """
@@ -45,7 +47,7 @@ class GadgetOutsideTester:
 
         self.__is_ready = False
 
-    def configure(self) :
+    def configure(self, platform) :
         """
         Configure the test environment by loading device reference descriptors and IP settings.
 
@@ -57,23 +59,142 @@ class GadgetOutsideTester:
 
         self.__is_ready = False
 
+        self.__platform = platform
+        descriptor_path = ""
+
+        if(platform == 'windows') : 
+            descriptor_path = limelight_windows_descriptors_path
+            self.__logger.info("--> Test platform is windows")
+        elif (platform == 'linux') : 
+            descriptor_path = limelight_linux_descriptors_path
+            self.__logger.info("--> Test platform is linux")
+        elif (platform == 'ios') : 
+            descriptor_path = limelight_ios_descriptors_path
+            self.__logger.info("--> Test platform is ios")
+        else :
+            self.__logger.error("Unknown platform " + platform + " shall be windows ,linux or ios")
+
+        
         # Load the reference limelight gadget descriptors from JSON file
         self.__limelight_reference = {}
-        with open(limelight_descriptors_path, "r") as f:
+        with open(descriptor_path, "r") as f:
             self.__limelight_reference = load(f)
-
-        # Extract the USB IP gateway from environment configuration file
-        self.__reference_ip = ""
-        with open(env_path, 'r') as file:
-            match = search(r'USB_IP_GATEWAY=([\d\.]+)', file.read())
-            if match : 
-                self.__reference_ip = match.group(1)
                 
         # Mark as ready if both reference descriptors and IP are loaded
-        if len(self.__limelight_reference) != 0 and len(self.__reference_ip) != 0:
+        if len(self.__limelight_reference) != 0 :
             self.__is_ready = True
 
+
     def run(self) :
+
+        result = False 
+
+        if self.__platform == 'linux'     : result = self.run_linux()
+        elif self.__platform == 'ios'     : result = self.run_ios()
+        elif self.__platform == 'windows' : result = self.run_windows()
+        else :
+            self.__logger.error("Unknown platform " + self.__platform + " shall be windows ,linux or ios")
+
+        return result
+
+    def run_ios(self) :
+
+        result = False
+
+        if self.__is_ready : 
+            self.__logger.info('RUNNING IOS OUTSIDE TESTS')
+            result = True
+
+            # find our device by vendor and product ID
+            device = GadgetOutsideTester.find_device(GadgetOutsideTester.sLimelightVendor, GadgetOutsideTester.sLimelightProduct)
+            if device is None:
+                self.__logger.error('--> Limelight like device not found')
+                result = False
+
+            else :
+                self.__logger.info('--> Limelight like device found')
+                # get the USB descriptors of the device
+                descriptors = GadgetOutsideTester.get_device_descriptors(GadgetOutsideTester.sLimelightVendor, GadgetOutsideTester.sLimelightProduct)
+                if descriptors is None:
+                    self.__logger.error('--> Could not get limelight descriptors')
+                    result = False
+                elif "USB" not in descriptors or "USB 3.1 Bus" not in descriptors["USB"] :
+                    self.__logger.error('--> Descriptors does not follow the USB pattern')
+                    result = False
+                else :
+                    self.__logger.info('--> Usb descriptors found')
+                    
+                    temp = descriptors["USB"]["USB 3.1 Bus"]
+                    for descriptor in temp :
+                       matches = {k: v for k, v in descriptor.items() if k.startswith("Raspberry")} 
+                       if len(matches) != 0 :
+                           for key, value in matches.items():
+                            descriptors = {key:value}
+                    
+                    # Compare the reference descriptors with the actual device descriptors
+                    differences = GadgetOutsideTester.deep_compare_dicts(self.__limelight_reference, descriptors)
+                    for difference in differences :
+                        if difference['reason'] == 'value' and difference['path'] == 'Raspberry Pi Compute Module 4 Rev 1.1/Location ID' :
+                            self.__logger.info("----> Difference in Location ID is allowed")
+                        else :
+                            # Log unexpected differences as errors
+                            if difference['reason'] == 'key' :
+                                self.__logger.error("----> Could not find key " + difference['value'] + " in one of the devices")
+                            elif difference['reason'] == 'length' :
+                                self.__logger.error("----> Key " + difference['path'] + " have different lengths : " + difference['1'] + " and " + difference['2'])
+                            elif difference['reason'] == 'value' :
+                                self.__logger.error("----> Mismatch value for path " + difference['path'] + " : " + difference['1'] + " and " + difference['2'])
+                            result = False
+
+        return result
+    
+    def run_windows(self) :
+
+        result = False
+
+        if self.__is_ready : 
+            self.__logger.info('RUNNING WINDOWS OUTSIDE TESTS')
+            result = True
+
+        run(['usbview.exe','/q','/savexml:temp.xml'])
+        if not path.isfile('temp.xml'):
+            self.__logger.error('USB descriptors gathering failed')
+
+        tree = ET.parse('temp.xml')
+        root = tree.getroot()
+
+        usb = {root.tag: GadgetOutsideTester.element_to_dict(root)}
+        descriptors = GadgetOutsideTester.find_usb_device(usb)
+        
+        if descriptors is None:
+            self.__logger.error('--> Could not get limelight descriptors')
+            result = False
+        
+        else :
+            self.__logger.info('--> Usb descriptors found')
+            
+            # Compare the reference descriptors with the actual device descriptors
+            differences = GadgetOutsideTester.deep_compare_dicts(self.__limelight_reference, descriptors)
+            for difference in differences :
+                # Allow known differences such as MAC address and bus device info
+                if difference['reason'] == 'value' and difference['path'] == 'Device Descriptor/Configuration Descriptor[1]/Interface Descriptor[0]/CDC Ethernet/iMacAddress' :
+                    self.__logger.info("----> Difference in MacAdddress is allowed")
+                elif difference['reason'] == 'key' and difference['value'].startswith("Bus") :
+                    self.__logger.info("----> Difference in bus device is allowed")
+                else :
+                    # Log unexpected differences as errors
+                    if difference['reason'] == 'key' :
+                        self.__logger.error("----> Could not find key " + difference['value'] + " in one of the devices")
+                    elif difference['reason'] == 'length' :
+                        self.__logger.error("----> Key " + difference['path'] + " have different lengths : " + difference['1'] + " and " + difference['2'])
+                    elif difference['reason'] == 'value' :
+                        self.__logger.error("----> Mismatch value for path " + difference['path'] + " : " + difference['1'] + " and " + difference['2'])
+                    result = False
+
+        return result
+
+
+    def run_linux(self) :
         """
         Validate the currently connected Limelight USB gadget by locating it via
         lsusb and comparing its descriptors to a reference snapshot.
@@ -86,7 +207,7 @@ class GadgetOutsideTester:
         result = False
 
         if self.__is_ready : 
-            self.__logger.info('RUNNING OUTSIDE TESTS')
+            self.__logger.info('RUNNING LINUX OUTSIDE TESTS')
             result = True
 
             # find our device by vendor and product ID
@@ -125,6 +246,22 @@ class GadgetOutsideTester:
                             result = False
 
         return result
+
+    def find_usb_device(data):
+        if isinstance(data, dict):
+            for key, value in data.items():
+                if key == "UsbDevice":
+                    return value
+                result = GadgetOutsideTester.find_usb_device(value)
+                if result is not None:
+                    return result
+        elif isinstance(data, list):
+            for item in data:
+                result =  GadgetOutsideTester.find_usb_device(item)
+                if result is not None:
+                    return result
+        return None
+
 
     def find_device(vendor_id, product_id):
         """
@@ -288,4 +425,26 @@ class GadgetOutsideTester:
                 result.append({ "reason" : "value", "path" : path, "1" : d1, "2" : d2})
             
 
+        return result
+
+    def element_to_dict(elem):
+        result = {}
+        # Add attributes if any
+        if elem.attrib:
+            result["@attributes"] = elem.attrib
+        # Add children
+        children = list(elem)
+        if children:
+            for child in children:
+                child_dict = GadgetOutsideTester.element_to_dict(child)
+                if child.tag in result:
+                    if isinstance(result[child.tag], list):
+                        result[child.tag].append(child_dict)
+                    else:
+                        result[child.tag] = [result[child.tag], child_dict]
+                else:
+                    result[child.tag] = child_dict
+        else:
+            # Add text if no children
+            result = elem.text.strip() if elem.text and elem.text.strip() else result
         return result

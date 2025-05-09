@@ -25,7 +25,7 @@ echo "❶ Configuring usb0 and eth0 ip range"
 source $scriptpath/../conf/env
 export ADDRESS_SCRIPT_PATH=/usr/local/bin/limelight-address.sh
 
-envsubst '$ETH_IP_GATEWAY,$USB_IP_GATEWAY' < $scriptpath/../data/limelight-address.sh > $ADDRESS_SCRIPT_PATH
+envsubst '$ETH_IP_GATEWAY,$USB_IP_GATEWAY_LINUX,$USB_IP_GATEWAY_WINDOWS' < $scriptpath/../data/limelight-address.sh > $ADDRESS_SCRIPT_PATH
 chmod +x $ADDRESS_SCRIPT_PATH
 
 echo "  ➡️  Created limelight address script"
@@ -68,10 +68,15 @@ echo "  ➡️  Installed dnsmasq DHCP server "
 
 # 2.1 - Create DHCP server for usb0 
 
-envsubst '$USB_IP_ADDRESSES' < $scriptpath/../data/usb0.conf > /etc/dnsmasq.d/usb0.conf
+envsubst '$USB_IP_ADDRESSES_LINUX' < $scriptpath/../data/usb0.conf > /etc/dnsmasq.d/usb0.conf
 echo "  ➡️  Created DHCP configuration for usb0"
 
-# 2.2 - Create DHCP server for eth0
+# 2.2 - Create DHCP server for usb1
+
+envsubst '$USB_IP_ADDRESSES_WINDOWS' < $scriptpath/../data/usb1.conf > /etc/dnsmasq.d/usb1.conf
+echo "  ➡️  Created DHCP configuration for usb1"
+
+# 2.3 - Create DHCP server for eth0
 
 envsubst '$ETH_IP_ADDRESSES,$ETH_IP_GATEWAY' < $scriptpath/../data/eth0.conf > /etc/dnsmasq.d/eth0.conf
 echo "  ➡️  Created DHCP configuration for eth0"
@@ -86,28 +91,51 @@ echo "✅ DHCP servers ready."
 echo ""
 echo "❸ Publishing names per interface"
 
-# 3.1 - Remove avahi configuration
+# 3.1 - Limit avahi to wlan
 
-if systemctl list-units --type=service | grep -q avahi-daemon.service; then
-    systemctl stop avahi-daemon
-    systemctl disable avahi-daemon
-    echo "  ➡️  Stopped and disabled avahi-daemon service."
-else
-    echo "  ➡️  Avahi-daemon service not active."
-fi
-if dpkg -l | grep -q avahi-daemon; then
-    apt -qq purge -y avahi-daemon avahi-autoipd libnss-mdns
-    apt -qq autoremove --purge -y
-    sudo rm -rf /etc/avahi /var/run/avahi-daemon
-    echo "  ➡️  Purged avahi packages..."
-else
-    echo "  ➡️  Avahi packages already removed."
+#!/bin/bash
+set -e
+
+echo "🔧 Restricting Avahi to wlan0"
+
+AVAHI_CONF="/etc/avahi/avahi-daemon.conf"
+
+# Backup original config
+if [ ! -f "${AVAHI_CONF}.bak" ]; then
+    sudo cp "$AVAHI_CONF" "${AVAHI_CONF}.bak"
 fi
 
-sudo sed -i.bak -E 's/(^hosts:.*)\bmdns[4_]*(_minimal)?(\s*\[NOTFOUND=return\])?//g' /etc/nsswitch.conf
-sudo sed -i -E 's/\s+/ /g' /etc/nsswitch.conf  # Clean up extra whitespace
+# Edit avahi-daemon.conf
+sudo sed -i \
+    -e 's/^#*use-ipv4=.*/use-ipv4=yes/' \
+    -e 's/^#*use-ipv6=.*/use-ipv6=no/' \
+    "$AVAHI_CONF"
 
-echo "  ➡️  Updated NSS config to remove mdns entries..."
+# Remove all allow-interfaces lines (even commented)
+sed -i '/^[# ]*allow-interfaces=/d' "$AVAHI_CONF"
+
+# Check if [server] section exists
+if grep -q '^\[server\]' "$AVAHI_CONF"; then
+    echo "✅ [server] section found, inserting allow-interfaces under it."
+
+    # Insert allow-interfaces=wlan0 under [server]
+    sed -i '/^\[server\]/a allow-interfaces=wlan0' "$AVAHI_CONF"
+else
+    echo "⚠️ No [server] section found, appending it at the end."
+
+    # Add the section and setting at end
+    echo "" >> "$AVAHI_CONF"
+    echo "[server]" >> "$AVAHI_CONF"
+    echo "allow-interfaces=wlan0" >> "$AVAHI_CONF"
+fi
+
+
+# Restart Avahi
+sudo systemctl restart avahi-daemon
+
+echo "✅ Avahi now limited to wlan0 only."
+
+# 3.2 - Install zeroconf based name resolver
 
 apt -qq install -y python3-zeroconf
 

@@ -42,11 +42,12 @@ class NetworkTester:
         self.__outside = NetworkOutsideTester()
         self.__inside = NetworkInsideTester()
 
-    def configure(self, source, user, hostname, password) :
+    def configure(self, source, platform, user, hostname, password) :
         """Configure the appropriate network tester based on the specified source.
 
         Args:
             source (str): Indicates whether tests are run from 'inside' or 'outside' the network.
+            platform (str): OS on which outside tests are executed (windows, ios, linux)
             user (str): SSH username (used only for outside tests).
             hostname (str): Hostname or IP address of the remote machine (used only for outside tests).
             password (str): SSH password (used only for outside tests).
@@ -59,7 +60,7 @@ class NetworkTester:
             self.__inside.configure()
         elif source == NetworkTester.sSourceOutside :
             self.__logger.info('%s', '--> Setting outside tests up')
-            self.__outside.configure(user, hostname, password)
+            self.__outside.configure(platform, user, hostname, password)
         else :
             self.__logger.error('%s', '--> Unknown test source : Giving up')
 
@@ -94,14 +95,15 @@ def main():
 # pylint: disable=R0913
 @main.command()
 @option('--source')
+@option('--platform')
 @option('--user')
 @option('--hostname')
 @option('--password')
-def run(source, user, hostname, password):
+def run(source, platform, user, hostname, password):
     """Run the network tests with specified configuration parameters."""
 
     tester = NetworkTester()
-    tester.configure(source, user, hostname, password)
+    tester.configure(source, platform, user, hostname, password)
     tester.run()
 
 if __name__ == "__main__":

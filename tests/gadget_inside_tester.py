@@ -43,14 +43,8 @@ class GadgetInsideTester:
 
         self.__logger.info('CONFIGURING INSIDE GADGET TEST')
 
-        self.__is_ready = False
+        self.__is_ready = True
 
-        self.__reference_ip = ""
-        with open(env_path, 'r') as file:
-            match = search(r'USB_IP_GATEWAY=([\d\.]+)', file.read())
-            if match : 
-                self.__reference_ip = match.group(1)
-                self.__is_ready = True
 
     def run(self) :
         """

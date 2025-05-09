@@ -35,29 +35,23 @@ class NameResolver :
         self.__dns  = None
         self.__services = []
 
-        self.__interfaces = [ 
-            ("usb0", None),
-            ("eth0", None),
-            ("wlan0", None),
-        ]
+        self.__interfaces = [ ]
 
-    def configure(self, usb, eth, wlan) :
+    def configure(self, usb, eth) :
         """
         Configure the forwarder with source and destination IPs and interfaces.
 
         Parameters:
         - usb: Name to publish on usb interface 
-        - eth: Name to publish on ethernet interface 
-        - wlan: Name to publish on wifi interface 
+        - eth: Name to publish on ethernet interface
         """
 
         self.__services = []
         self.__dns = Zeroconf(ip_version=IPVersion.V4Only)
 
         self.__interfaces = [ 
-            ("usb0", usb),
-            ("eth0", eth),
-            ("wlan0", wlan),
+            (usb, ["usb0", "usb1"]),
+            (eth, ["eth0"])
         ]
 
         handler = RotatingFileHandler('/var/log/name_forwarder.log', maxBytes=5*1024*1024, backupCount=3)
@@ -87,37 +81,39 @@ class NameResolver :
 
         self.__services = []
 
-        for interface, name in self.__interfaces :
+        for name, interfaces in self.__interfaces :
 
-            ip = None
+            ips = []
+            for interface in interfaces :
+                try :  
+                    ip = NameResolver.__ip_address(interface)
+                    if not ip : raise Exception()
+                    ips.append(inet_aton(ip))
+
+                except Exception :
+                    result = False 
+                    error("No IP found for interface " + interface)
+
             try : 
-                ip = NameResolver.__ip_address(interface)
-                if not ip : raise Exception()
-                info(" Publishing " + interface + " → " + ip)
-
-            except Exception :
-                result = False 
-                error("Skipping " + interface + " : no IP found")
-
-            try : 
-                if ip is not None : 
+                if len(ips) != 0 : 
                     service = ServiceInfo(
                         type_="_http._tcp.local.",
                         name=f"{name}._http._tcp.local.",
-                        addresses=[inet_aton(ip)],
+                        addresses=ips,
                         port=80,  # Dummy port — ignored for name resolution
                         properties={},
                         server=name,
                     )
                     self.__dns.register_service(service)
                     self.__services.append(service)
-                    info(" Publishing name " + name + " on " + interface)
+                    for ip in ips :
+                        info(" Publishing name " + name + " on " + str(inet_ntoa(ip)))
 
             except Exception as e :
                 result = False 
                 error("Failed to register " + interface + " : " + str(e))
         
-        return (result and self.__is_running)
+        return (result or not self.__is_running)
 
     def process(self):
         """
@@ -131,24 +127,33 @@ class NameResolver :
 
                 services = []
 
-                for interface, name in self.__interfaces :
+                for name, interfaces in self.__interfaces :
 
-                    ip = None
+                    ips = []
+                    for interface in interfaces :
+                        try :  
+                            ip = NameResolver.__ip_address(interface)
+                            if not ip : raise Exception()
+                            ips.append(inet_aton(ip))
+
+                        except Exception :
+                            error("No IP found for interface " + interface)
+
                     try : 
-                        ip = NameResolver.__ip_address(interface)
-                        if not ip : raise Exception()
-
-                    except Exception :
-                        result = False 
-                        error("No IP found for " + interface)
-
-                    try : 
-                        if ip is not None :
+                        if len(ips) != 0 : 
                             matching_service = next((s for s in self.__services if s.server == name), None)
                             if matching_service :
-                                current_ip = inet_ntoa(matching_service.addresses[0])
-                                if current_ip != ip :
-                                    info(f"IP for {interface} changed from {current_ip} to {ip}, updating service.")
+                                shall_update = False
+                                for ip in ips :
+                                    if not ip in matching_service.addresses :
+                                        info(f"New IP found for {name} changed from {inet_ntoa(ip)}, updating service.")
+                                        shall_update = True
+                                for address in matching_service.addresses :
+                                    if not address in ips :
+                                        info(f"IP no {address} longer valid for {name}, updating service.")
+                                        shall_update = True
+                                
+                                if shall_update :
 
                                     # Unregister old and register new
                                     self.__dns.unregister_service(matching_service)
@@ -157,7 +162,7 @@ class NameResolver :
                                     new_service = ServiceInfo(
                                         type_="_http._tcp.local.",
                                         name=f"{name}._http._tcp.local.",
-                                        addresses=[inet_aton(current_ip)],
+                                        addresses=ips,
                                         port=80,
                                         properties={},
                                         server=name,
@@ -167,23 +172,25 @@ class NameResolver :
                                 else:
                                     self.__dns.update_service(matching_service)
                                     services.append(matching_service)
-                                    info(f"Refreshed service for {interface} at {current_ip}")
+                                    for ip in ips : 
+                                        info(f"Refreshed service for {name} at {inet_ntoa(ip)}")
                             else:
                                 # No service published yet, possibly reinitialization
                                 new_service = ServiceInfo(
                                     type_="_http._tcp.local.",
                                     name=f"{name}._http._tcp.local.",
-                                    addresses=[inet_aton(ip)],
+                                    addresses=ips,
                                     port=80,
                                     properties={},
                                     server=name,
                                 )
                                 self.__dns.register_service(new_service)
                                 services.append(new_service)
-                                info(f"Registered new service for {interface} at {current_ip}")
+                                for ip in ips : 
+                                    info(f"Registered new service for {name} at {inet_ntoa(ip)}")
 
                     except Exception as e:
-                        error(f"Error updating service for {interface}: {e}")
+                        error(f"Error updating service for {name}: {e}")
 
                 # Replace the services list with updated references
                 self.__services = services
@@ -227,13 +234,12 @@ if __name__ == "__main__":
     parser = ArgumentParser(description="Name resolver for Limelight access through multiple interfaces")
     parser.add_argument("--usb", dest="usb", required=True, help="Name to publish on usb gadget interface")
     parser.add_argument("--eth", dest="eth", required=True, help="Name to publish on ethernet interface")
-    parser.add_argument("--wlan", dest="wlan", required=True, help="Name to publish on wifi interface")
 
 
     args = parser.parse_args()
 
     # Configure and start the forwarder
-    resolver.configure(args.usb, args.eth, args.wlan)
+    resolver.configure(args.usb, args.eth)
 
     started = False
     while not started : 

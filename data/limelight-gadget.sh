@@ -67,9 +67,6 @@ echo "❸ Creating descriptors"
 
 cd $GADGET_DIR/limelight
 
-USB_ETH_ADDR="00:1A:2C:F9:08:66"
-USB_HOST_ADDR="00:1A:2C:F9:08:67"
-
 echo "0x1d6b" > idVendor
 echo "0x0104" > idProduct
 echo "0x02" > bDeviceClass
@@ -98,8 +95,8 @@ echo 250 > configs/c.1/MaxPower
 echo 0xc0 > configs/c.1/bmAttributes
 
 mkdir -p functions/ecm.usb0
-echo "$USB_ETH_ADDR" > functions/ecm.usb0/dev_addr
-echo "$USB_HOST_ADDR" > functions/ecm.usb0/host_addr
+echo "00:1A:2C:F9:08:66" > functions/ecm.usb0/dev_addr
+echo "00:1A:2C:F9:08:67" > functions/ecm.usb0/host_addr
 
 ln -s functions/ecm.usb0 configs/c.1/
 
@@ -110,14 +107,14 @@ echo "RNDIS" > configs/c.2/strings/0x409/configuration
 echo 250 > configs/c.2/MaxPower
 echo 0xc0 > configs/c.2/bmAttributes
 
-mkdir -p functions/rndis.usb0
-echo "$USB_ETH_ADDR" > functions/rndis.usb0/dev_addr
-echo "$USB_HOST_ADDR" > functions/rndis.usb0/host_addr
-mkdir -p functions/rndis.usb0/os_desc/interface.rndis
-echo "RNDIS" > functions/rndis.usb0/os_desc/interface.rndis/compatible_id
-echo "5162001" > functions/rndis.usb0/os_desc/interface.rndis/sub_compatible_id
+mkdir -p functions/rndis.usb1
+echo "00:1A:2E:F9:08:67" > functions/rndis.usb1/dev_addr
+echo "00:1A:2E:F9:08:66" > functions/rndis.usb1/host_addr
+mkdir -p functions/rndis.usb1/os_desc/interface.rndis
+echo "RNDIS" > functions/rndis.usb1/os_desc/interface.rndis/compatible_id
+echo "5162001" > functions/rndis.usb1/os_desc/interface.rndis/sub_compatible_id
 
-ln -s functions/rndis.usb0 configs/c.2/
+ln -s functions/rndis.usb1 configs/c.2/
 
 # Link os_desc to RNDIS config after all configs/functions are in place
 ln -s configs/c.2 os_desc

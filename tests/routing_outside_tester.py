@@ -45,7 +45,7 @@ class RoutingOutsideTester:
 
         self.__is_ready = False
 
-    def configure(self) :
+    def configure(self, platform) :
         """
         Load the reference USB and Ethernet IPs from the environment configuration file.
         Marks the tester as ready if both IPs are found.
@@ -61,15 +61,38 @@ class RoutingOutsideTester:
             if match : 
                 self.__reference_eth_ip = match.group(1)
 
-        self.__reference_usb_ip = ""
+        # Read the USB gateway IP address from the environment file
+        usb_linux_ip = ""
         with open(env_path, 'r') as file:
-            match = search(r'USB_IP_GATEWAY=([\d\.]+)', file.read())
+            match = search(r'USB_IP_GATEWAY_LINUX=([\d\.]+)', file.read())
             if match : 
-                self.__reference_usb_ip = match.group(1)
+                usb_linux_ip = match.group(1)
 
+        # Read the USB gateway IP address from the environment file
+        usb_windows_ip = ""
+        with open(env_path, 'r') as file:
+            match = search(r'USB_IP_GATEWAY_WINDOWS=([\d\.]+)', file.read())
+            if match : 
+                usb_windows_ip= match.group(1)
+        
+        self.__shall_test_names = True
+        
+        if(platform == 'windows') : 
+            self.__shall_test_names = False
+            self.__reference_usb_ip = usb_windows_ip
+        elif (platform == 'linux') : 
+            self.__shall_test_names = True
+            self.__reference_usb_ip = usb_linux_ip
+        elif (platform == 'ios') : 
+            self.__shall_test_names = True
+            self.__reference_usb_ip = usb_linux_ip
+        else :
+            self.__logger.error("Unknown platform " + platform + " shall be windows ,linux or ios")
 
-        if len(self.__reference_eth_ip) != 0 and len(self.__reference_usb_ip) != 0 :
+        # Set readiness to True only if both IP addresses are found
+        if len(self.__reference_eth_ip) != 0 and len(self.__reference_usb_ip) != 0:
             self.__is_ready = True
+
 
     def run(self) :
         """
@@ -86,6 +109,7 @@ class RoutingOutsideTester:
             result = True
 
             rest_api_check = self.__check_rest_api()
+            print(rest_api_check)
             if not rest_api_check : result = False
 
             webclient_check = self.__check_client()
@@ -115,20 +139,21 @@ class RoutingOutsideTester:
                 self.__logger.error(f"HTTP client access failed on {ip}:5801 with error: {e}")
                 result = False
 
-        for name in ["limelight.eth.local", "limelight.local"]:
-            try:
-                conn = client.HTTPConnection(name, 5801, timeout=2)
-                conn.request("GET", "/")
-                response = conn.getresponse()
-                if response.status != 200:
-                    self.__logger.error(f"HTTP client on {name}:5801 returned status {response.status}")
+        if self.__shall_test_names :
+            for name in ["limelight.eth.local", "limelight.local"]:
+                try:
+                    conn = client.HTTPConnection(name, 5801, timeout=2)
+                    conn.request("GET", "/")
+                    response = conn.getresponse()
+                    if response.status != 200:
+                        self.__logger.error(f"HTTP client on {name}:5801 returned status {response.status}")
+                        result = False
+                    else:
+                        self.__logger.info(f"HTTP client on {name}:5801 is reachable")
+                    conn.close()
+                except Exception as e:
+                    self.__logger.error(f"HTTP client access failed on {name}:5801 with error: {e}")
                     result = False
-                else:
-                    self.__logger.info(f"HTTP client on {name}:5801 is reachable")
-                conn.close()
-            except Exception as e:
-                self.__logger.error(f"HTTP client access failed on {name}:5801 with error: {e}")
-                result = False
 
         return result
 
@@ -147,7 +172,7 @@ class RoutingOutsideTester:
                 limelights.append(ip)
 
         if len(limelights) != 2 :
-            self.__logger.error('--> Found ' + len(limelights) + ' limelight interfaces instead of 2')
+            self.__logger.error('--> Found ' + str(len(limelights)) + ' limelight interfaces instead of 2')
             result = False
         if self.__reference_eth_ip not in limelights :
             self.__logger.error('--> Ethernet interface for limelight not found')

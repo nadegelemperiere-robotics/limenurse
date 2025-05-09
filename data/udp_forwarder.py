@@ -34,49 +34,57 @@ class UdpForwarder :
         self.__forward_sending_socket = None
         self.__forward_receiving_socket1 = None
         self.__forward_receiving_socket2 = None
+        self.__forward_receiving_socket3 = None
 
         # Sockets from limelight
         self.__backward_sending_socket1 = None
         self.__backward_sending_socket2 = None
+        self.__backward_sending_socket3 = None
         self.__backward_receiving_socket = None
 
         # Gateways IP (limelight and PI)
         self.__gateway1 = None
         self.__gateway2 = None
+        self.__gateway3 = None
         self.__gateway_out = None
 
         # Interfaces names on PI
         self.__interface1 = None
         self.__interface2 = None
+        self.__interface3 = None
         self.__interface_out = None
 
         # Senders and receivers IPs on the gateways networks
         self.__ip1 = None
         self.__ip2 = None
+        self.__ip3 = None
         self.__ip_out = None
 
-    def configure(self, in_ip1, in_ip2, out_ip, in_int1, in_int2, out_int, port) :
+    def configure(self, in_ip1, in_ip2, in_ip3, out_ip, in_int1, in_int2, in_int3, out_int, port) :
         """
         Configure the forwarder with source and destination IPs and interfaces.
 
         Parameters:
-        - in_ip1, in_ip2: Gateway IPs for the two input interfaces (source networks).
+        - in_ip1, in_ip2, in_ip3: Gateway IPs for the two input interfaces (source networks).
         - out_ip: Gateway IP for the output interface (destination network).
-        - in_int1, in_int2: Network interfaces to listen on for incoming UDP packets.
+        - in_int1, in_int2, in_int3: Network interfaces to listen on for incoming UDP packets.
         - out_int: Network interface to forward UDP packets to.
         - port: UDP port number used for forwarding.
         """
 
         self.__gateway1 = in_ip1
         self.__gateway2 = in_ip2
+        self.__gateway3 = in_ip3
         self.__gateway_out = out_ip
 
         self.__interface1 = in_int1
         self.__interface2 = in_int2
+        self.__interface3 = in_int3
         self.__interface_out = out_int
 
         self.__ip1 = None
         self.__ip2 = None
+        self.__ip3 = None
         self.__ip_out = None
 
         self.__port = port
@@ -106,7 +114,6 @@ class UdpForwarder :
         signal(SIGTERM, self.__handle_signal)
         signal(SIGINT, self.__handle_signal)
 
-
         try :
             # Raw socket to receive all IPv4 packets on interface1
             self.__forward_receiving_socket1 = socket(AF_PACKET, SOCK_RAW, ntohs(0x0800))
@@ -125,6 +132,16 @@ class UdpForwarder :
             info(f" Raw forward receiving socket 2 bound to {self.__interface2}")
         except Exception as e:
             error(f"Failed to bind raw forward socket 2 : {e}")
+            result = False
+
+        try :
+            # Raw socket to receive all IPv4 packets on interface3
+            self.__forward_receiving_socket3 = socket(AF_PACKET, SOCK_RAW, ntohs(0x0800))
+            self.__forward_receiving_socket3.bind((self.__interface3,0))
+            self.__forward_receiving_socket3.setblocking(0)
+            info(f" Raw forward receiving socket 3 bound to {self.__interface3}")
+        except Exception as e:
+            error(f"Failed to bind raw forward socket 3 : {e}")
             result = False
         
         try :
@@ -163,13 +180,22 @@ class UdpForwarder :
         except Exception as e:
             error(f"Failed to create backward sending socket 2: {e}")
             result = False
+        try:
+            # UDP socket for sending backward packets to gateway2
+            self.__backward_sending_socket3 = socket(AF_INET, SOCK_DGRAM)
+            self.__backward_sending_socket3.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
+        except Exception as e:
+            error(f"Failed to create backward sending socket 3: {e}")
+            result = False
         
         info(f"Forwarding all UDP packets received on {self.__interface1} to {self.__interface_out} on port {self.__port}")
         info(f"Forwarding all UDP packets received on {self.__interface2} to {self.__interface_out} on port {self.__port}")
+        info(f"Forwarding all UDP packets received on {self.__interface3} to {self.__interface_out} on port {self.__port}")
         info(f"Forwarding all UDP packets received on {self.__interface_out} to {self.__interface1} on same port")
         info(f"Forwarding all UDP packets received on {self.__interface_out} to {self.__interface2} on same port")
+        info(f"Forwarding all UDP packets received on {self.__interface_out} to {self.__interface3} on same port")
 
-        return (result and self.__is_running)
+        return (result or not self.__is_running)
 
     def process_forward1(self):
         """
@@ -287,6 +313,64 @@ class UdpForwarder :
                 except Exception as e:
                     error(f"Raw socket recv error: {e}")
 
+    
+    def process_forward3(self):
+        """
+        Continuously process UDP packets received on interface3 and forward them to the output interface.
+        """
+        while self.__is_running:
+            if (
+                self.__forward_receiving_socket3 is None
+                or not self.__interface_is_up(self.__interface3)
+            ):
+                self.__forward_receiving_socket3 = self.__rebind_socket(self.__forward_receiving_socket3, self.__interface3)
+                if self.__forward_receiving_socket3 is None:
+                    from time import sleep
+                    sleep(1)
+                    continue
+            try:
+                ready, _, _ = select([self.__forward_receiving_socket3], [], [], 1.0)
+            except Exception as e:
+                error(f"Select error on forward3: {e}")
+                continue
+            if ready:
+                try:
+                    pkt, _ = self.__forward_receiving_socket3.recvfrom(65535)
+                    ip_header = pkt[14:34]
+                    udp_header = pkt[34:42]
+                    iph = unpack('!BBHHHBBH4s4s', ip_header)
+                    protocol = iph[6]
+                    if protocol != 17:
+                        continue  # Not UDP
+                    src_addr = inet_ntoa(iph[8])
+                    dst_addr = inet_ntoa(iph[9])
+                    self.__ip3 = src_addr
+                    udph = unpack('!HHHH', udp_header)
+                    src_port, dst_port = udph[0], udph[1]
+                    if dst_port in (53, 67, 68, 5353):
+                        debug(f"[SKIP] Skipping UDP packet to reserved port {dst_port}")
+                        continue
+                    data = pkt[42:]
+                    debug(f"[RECV] UDP {src_addr}:{src_port} → {dst_addr}:{dst_port}, {len(data)} bytes")
+                    try:
+                        target_ip = self.__gateway_out
+                        if self.__ip_out is not None:
+                            target_ip = self._ip_out
+                        self.__forward_sending_socket.sendto(data, (target_ip, dst_port))
+                        debug(f"[SEND] Forwarded to {target_ip}:{dst_port}")
+                    except Exception as e:
+                        error(f"Failed to forward: {e}")
+                except OSError as e:
+                    if getattr(e, 'errno', None) == 100:
+                        error(f"Network down on interface {self.__interface3}, will rebind: {e}")
+                        self.__forward_receiving_socket3 = None
+                        from time import sleep
+                        sleep(1)
+                    else:
+                        error(f"Raw socket recv error: {e}")
+                except Exception as e:
+                    error(f"Raw socket recv error: {e}")
+
     def process_backward(self):
         """
         Continuously process UDP packets received on the output interface and forward them back to interface1 and interface2.
@@ -335,7 +419,11 @@ class UdpForwarder :
                         if self.__ip2 is not None:
                             target_ip2 = self.__ip2
                         self.__backward_sending_socket2.sendto(data, (target_ip2, dst_port))
-                        debug(f"[SEND] Forwarded to {target_ip1}:{dst_port} and {target_ip2}:{dst_port}")
+                        target_ip3 = self.__gateway2
+                        if self.__ip3 is not None:
+                            target_ip3 = self.__ip3
+                        self.__backward_sending_socket3.sendto(data, (target_ip3, dst_port))
+                        debug(f"[SEND] Forwarded to {target_ip1}:{dst_port} , {target_ip2}:{dst_port} and {target_ip3}:{dst_port}")
                     except Exception as e:
                         error(f"Failed to forward: {e}")
                 except OSError as e:
@@ -355,8 +443,10 @@ class UdpForwarder :
         if self.__backward_receiving_socket is not None : self.__backward_receiving_socket.close()
         if self.__backward_sending_socket1  is not None : self.__backward_sending_socket1.close()
         if self.__backward_sending_socket2  is not None : self.__backward_sending_socket2.close()
+        if self.__backward_sending_socket3  is not None : self.__backward_sending_socket3.close()
         if self.__forward_receiving_socket1 is not None : self.__forward_receiving_socket1.close()
         if self.__forward_receiving_socket2 is not None : self.__forward_receiving_socket2.close()
+        if self.__forward_receiving_socket3 is not None : self.__forward_receiving_socket3.close()
         if self.__forward_sending_socket    is not None : self.__forward_sending_socket.close()
 
 
@@ -411,15 +501,17 @@ if __name__ == "__main__":
     parser = ArgumentParser(description="UDP forwarder for Limelight discovery")
     parser.add_argument("--from-ip1", dest="src_ip1", required=True, help="Source IP to listen on")
     parser.add_argument("--from-ip2", dest="src_ip2", required=True, help="Source IP to listen on")
+    parser.add_argument("--from-ip3", dest="src_ip3", required=True, help="Source IP to listen on")
     parser.add_argument("--to-ip", dest="dst_ip", required=True, help="Destination IP to forward to")
     parser.add_argument("--from-interface1", dest="src_int1", required=True, help="Interface for reverse direction")
     parser.add_argument("--from-interface2", dest="src_int2", required=True, help="Interface for reverse direction")
+    parser.add_argument("--from-interface3", dest="src_int3", required=True, help="Interface for reverse direction")
     parser.add_argument("--to-interface", dest="dst_int", required=True, help="Interface for forward direction")
 
     args = parser.parse_args()
 
     # Configure and start the forwarder
-    forwarder.configure(args.src_ip1, args.src_ip2, args.dst_ip, args.src_int1, args.src_int2, args.dst_int, 5809)
+    forwarder.configure(args.src_ip1, args.src_ip2, args.src_ip3 , args.dst_ip, args.src_int1, args.src_int2, args.src_int3, args.dst_int, 5809)
     
     started = False
     while not started :  started = forwarder.start()
@@ -429,6 +521,7 @@ if __name__ == "__main__":
     threads = []
     threads.append(Thread(target=forwarder.process_forward1, args=(), daemon=True))
     threads.append(Thread(target=forwarder.process_forward2, args=(), daemon=True))
+    threads.append(Thread(target=forwarder.process_forward3, args=(), daemon=True))
     threads.append(Thread(target=forwarder.process_backward, args=(), daemon=True))
 
     for t in threads:
