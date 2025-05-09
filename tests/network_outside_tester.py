@@ -128,12 +128,11 @@ class NetworkOutsideTester:
                 else :
                     self.__logger.error('--> Ethernet name is not resolved')
 
-            if self.__shall_test_names : 
-                wlan_ip = NetworkOutsideTester.resolve(self.__hostname + ".local")
-                if len(wlan_ip) != 0 :
-                    self.__logger.info('--> Wlan name is resolved to ip ' + wlan_ip)
-                else :
-                    self.__logger.error('--> Wlan name is not resolved')
+            wlan_ip = NetworkOutsideTester.resolve(self.__hostname + ".local")
+            if len(wlan_ip) != 0 :
+                self.__logger.info('--> Wlan name is resolved to ip ' + wlan_ip)
+            else :
+                self.__logger.error('--> Wlan name is not resolved')
 
             is_pingable = NetworkOutsideTester.is_pingable(self.__reference_usb_ip)
             if is_pingable :
@@ -172,13 +171,13 @@ class NetworkOutsideTester:
                     self.__logger.error('--> Ethernet name not pingable')
                     result = False
 
-            if self.__shall_test_names : 
-                is_pingable = NetworkOutsideTester.is_pingable(self.__hostname + ".local")
-                if is_pingable :
-                    self.__logger.info('--> Wlan name pingable')
-                else :
-                    self.__logger.error('--> Wlan name not pingable')
-                    result = False
+       
+            is_pingable = NetworkOutsideTester.is_pingable(self.__hostname + ".local")
+            if is_pingable :
+                self.__logger.info('--> Wlan name pingable')
+            else :
+                self.__logger.error('--> Wlan name not pingable')
+                result = False
             
             can_login = NetworkOutsideTester.test_ssh(self.__reference_eth_ip, self.__user, self.__password)
             if can_login :
@@ -202,13 +201,13 @@ class NetworkOutsideTester:
                     self.__logger.error('--> Login with ethernet name is not possible')
                     result = False
 
-            if self.__shall_test_names : 
-                can_login = NetworkOutsideTester.test_ssh(self.__hostname + '.local', self.__user, self.__password)
-                if can_login :
-                    self.__logger.info('--> Login with wlan name is possible ')
-                else :
-                    self.__logger.error('--> Login with wlan name is not possible')
-                    result = False
+     
+            can_login = NetworkOutsideTester.test_ssh(self.__hostname + '.local', self.__user, self.__password)
+            if can_login :
+                self.__logger.info('--> Login with wlan name is possible ')
+            else :
+                self.__logger.error('--> Login with wlan name is not possible')
+                result = False
 
         return result
     
