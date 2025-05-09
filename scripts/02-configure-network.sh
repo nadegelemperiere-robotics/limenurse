@@ -87,68 +87,68 @@ echo "  🔄 Restarted dnsmasq service"
 
 echo "✅ DHCP servers ready."
 
-# 3 - Publishing names for each interface
-echo ""
-echo "❸ Publishing names per interface"
+# # 3 - Publishing names for each interface
+# echo ""
+# echo "❸ Publishing names per interface"
 
-# 3.1 - Remove avahi configuration
+# # 3.1 - Remove avahi configuration
 
-if systemctl list-units --type=service | grep -q avahi-daemon.service; then
-    systemctl stop avahi-daemon
-    systemctl disable avahi-daemon
-    echo "  ➡️  Stopped and disabled avahi-daemon service."
-else
-    echo "  ➡️  Avahi-daemon service not active."
-fi
-if dpkg -l | grep -q avahi-daemon; then
-    apt -qq purge -y avahi-daemon avahi-autoipd libnss-mdns
-    apt -qq autoremove --purge -y
-    sudo rm -rf /etc/avahi /var/run/avahi-daemon
-    echo "  ➡️  Purged avahi packages..."
-else
-    echo "  ➡️  Avahi packages already removed."
-fi
+# if systemctl list-units --type=service | grep -q avahi-daemon.service; then
+#     systemctl stop avahi-daemon
+#     systemctl disable avahi-daemon
+#     echo "  ➡️  Stopped and disabled avahi-daemon service."
+# else
+#     echo "  ➡️  Avahi-daemon service not active."
+# fi
+# if dpkg -l | grep -q avahi-daemon; then
+#     apt -qq purge -y avahi-daemon avahi-autoipd libnss-mdns
+#     apt -qq autoremove --purge -y
+#     sudo rm -rf /etc/avahi /var/run/avahi-daemon
+#     echo "  ➡️  Purged avahi packages..."
+# else
+#     echo "  ➡️  Avahi packages already removed."
+# fi
 
-sudo sed -i.bak -E 's/(^hosts:.*)\bmdns[4_]*(_minimal)?(\s*\[NOTFOUND=return\])?//g' /etc/nsswitch.conf
-sudo sed -i -E 's/\s+/ /g' /etc/nsswitch.conf  # Clean up extra whitespace
+# sudo sed -i.bak -E 's/(^hosts:.*)\bmdns[4_]*(_minimal)?(\s*\[NOTFOUND=return\])?//g' /etc/nsswitch.conf
+# sudo sed -i -E 's/\s+/ /g' /etc/nsswitch.conf  # Clean up extra whitespace
 
-echo "  ➡️  Updated NSS config to remove mdns entries..."
+# echo "  ➡️  Updated NSS config to remove mdns entries..."
 
-apt -qq install -y python3-zeroconf
+# apt -qq install -y python3-zeroconf
 
-cp $scriptpath/../data/name_resolver.py /usr/local/bin/name_resolver.py
+# cp $scriptpath/../data/name_resolver.py /usr/local/bin/name_resolver.py
 
-export DNS_SCRIPT_PATH=/usr/local/bin/limelight-dns.sh
+# export DNS_SCRIPT_PATH=/usr/local/bin/limelight-dns.sh
 
-envsubst '$ETH_IP_GATEWAY,$USB_IP_GATEWAY' < $scriptpath/../data/limelight-dns.sh > $DNS_SCRIPT_PATH
-chmod +x $DNS_SCRIPT_PATH
+# envsubst '$ETH_IP_GATEWAY,$USB_IP_GATEWAY' < $scriptpath/../data/limelight-dns.sh > $DNS_SCRIPT_PATH
+# chmod +x $DNS_SCRIPT_PATH
 
-echo "  ➡️  Created limelight dns script"
+# echo "  ➡️  Created limelight dns script"
 
-SERVICE_PATH=/etc/systemd/system/limelight-dns.service
-envsubst '$DNS_SCRIPT_PATH' < $scriptpath/../data/limelight-dns.service > $SERVICE_PATH
+# SERVICE_PATH=/etc/systemd/system/limelight-dns.service
+# envsubst '$DNS_SCRIPT_PATH' < $scriptpath/../data/limelight-dns.service > $SERVICE_PATH
 
-echo "  ➡️  Prepared limelight dns service"
+# echo "  ➡️  Prepared limelight dns service"
 
-# Check if service already exists
-if systemctl list-unit-files | grep -q limelight-dns.service; then
-    echo "  🔁 Service already exists. Reloading, enabling, and restarting."
-    systemctl daemon-reload
-    systemctl enable limelight-dns.service
-    systemctl restart limelight-dns.service
-else
-    echo "  🆕 Installing new service."
-    systemctl daemon-reload
-    systemctl enable limelight-dns.service
-    systemctl start limelight-dns.service
-fi
+# # Check if service already exists
+# if systemctl list-unit-files | grep -q limelight-dns.service; then
+#     echo "  🔁 Service already exists. Reloading, enabling, and restarting."
+#     systemctl daemon-reload
+#     systemctl enable limelight-dns.service
+#     systemctl restart limelight-dns.service
+# else
+#     echo "  🆕 Installing new service."
+#     systemctl daemon-reload
+#     systemctl enable limelight-dns.service
+#     systemctl start limelight-dns.service
+# fi
 
-if ! systemctl is-active --quiet limelight-dns.service; then
-    echo "  ❌ Failed to start limelight dns service"
-    exit 1
-fi
+# if ! systemctl is-active --quiet limelight-dns.service; then
+#     echo "  ❌ Failed to start limelight dns service"
+#     exit 1
+# fi
 
-echo "✅ Limelight dns installation complete"
+# echo "✅ Limelight dns installation complete"
 
 # 4 - Reboot to make sure everything is consistent
 echo ""
