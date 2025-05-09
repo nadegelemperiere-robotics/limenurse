@@ -224,7 +224,7 @@ class NetworkInsideTester:
         try:
             with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                 for line in f:
-                    if '[ERROR]' in line:
+                    if ' - ERROR -' in line:
                         result = False
         except Exception as e:
             result = False

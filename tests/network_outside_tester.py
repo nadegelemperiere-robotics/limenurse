@@ -97,7 +97,7 @@ class NetworkOutsideTester:
         self.__password = password
 
          # Set readiness to True only if both IP addresses are found
-        if len(self.__reference_eth_ip) != 0 and len(self.__reference_usb_windows_ip) != 0 and len(self.__reference_usb_linux_ip) != 0:
+        if len(self.__reference_eth_ip) != 0 and len(self.__reference_usb_ip) != 0 :
             self.__is_ready = True
 
 

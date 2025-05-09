@@ -195,7 +195,7 @@ class UdpForwarder :
         info(f"Forwarding all UDP packets received on {self.__interface_out} to {self.__interface2} on same port")
         info(f"Forwarding all UDP packets received on {self.__interface_out} to {self.__interface3} on same port")
 
-        return (result and self.__is_running)
+        return (result or not self.__is_running)
 
     def process_forward1(self):
         """

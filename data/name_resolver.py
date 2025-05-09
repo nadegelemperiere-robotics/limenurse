@@ -116,7 +116,7 @@ class NameResolver :
                 result = False 
                 error("Failed to register " + interface + " : " + str(e))
         
-        return (result and self.__is_running)
+        return (result or not self.__is_running)
 
     def process(self):
         """
